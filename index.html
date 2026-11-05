@@ -13,10 +13,18 @@
   <header class="topbar">
     <a class="wordmark" href="./" aria-label="Silvio XXXIII, replay from the beginning"><span>✦</span> SILVIO <i>XXXIII</i></a>
     <div class="edition">A LITTLE HEAVENLY THEATRE</div>
-    <nav aria-label="Playback controls"><button id="sound-button" aria-pressed="true" type="button"><span aria-hidden="true">♪</span> Sound on</button><button id="pause-button" aria-label="Pause performance" aria-pressed="false" type="button">Ⅱ</button><button id="skip-button" type="button">Skip intro <span aria-hidden="true">↗</span></button></nav>
+    <nav aria-label="Playback controls"><button id="sound-button" aria-pressed="false" type="button"><span aria-hidden="true">♪</span> Sound off</button><button id="pause-button" aria-label="Pause performance" aria-pressed="false" type="button">Ⅱ</button><button id="skip-button" type="button">Skip intro <span aria-hidden="true">↗</span></button></nav>
   </header>
 
   <main class="theatre" aria-label="The birthday miracle, a puppet theatre for Silvio">
+    <section class="welcome" id="welcome" aria-labelledby="welcome-title" aria-describedby="welcome-description">
+      <span class="welcome-star" aria-hidden="true">✦</span>
+      <p class="welcome-kicker">SILVIO XXXIII · A LITTLE HEAVENLY THEATRE</p>
+      <h1 id="welcome-title">Before the<br><em>curtain rises.</em></h1>
+      <p id="welcome-description">A small birthday spectacle.<br>Choose your kind of miracle.</p>
+      <div class="welcome-actions"><button id="watch-with-sound" type="button"><span>A miracle with fanfare</span><small><span aria-hidden="true">♪</span> Sound on</small></button><button id="watch-quietly" type="button"><span>A quiet miracle</span><small>Sound off</small></button></div>
+      <small>You can change this anytime.</small>
+    </section>
     <div class="scene" aria-hidden="true">
       <div class="backdrop"></div><div class="starlight"></div>
       <div class="beam beam-left"></div><div class="beam beam-right"></div>

@@ -7,19 +7,35 @@
   <meta name="description" content="A heavenly birthday surprise for Silvio, currently under construction.">
   <title>Silvio XXXIII · A Miracle in Progress</title>
   <link rel="stylesheet" href="./retro.css">
-  <script src="./retro.js" defer></script>
+  <script src="./retro.js" type="module"></script>
 </head>
 <body data-theme="retro" data-phase="arrival">
   <div class="app">
     <header class="topbar">
       <div class="brand"><span class="brand-star" aria-hidden="true">✦</span> <span>THE SILVIO PROJECT <small>EST. XXXIII</small></span></div>
       <div class="controls">
-        <button class="control" id="sound-button" type="button" aria-pressed="true"><span aria-hidden="true">♪</span> <span class="sound-label">Sound on</span></button>
+        <button class="control" id="sound-button" type="button" aria-pressed="false"><span aria-hidden="true">♪</span> <span class="sound-label">Sound off</span></button>
         <button class="control" id="skip-button" type="button">Skip intro <span aria-hidden="true">↗</span></button>
       </div>
     </header>
 
     <main class="stage" aria-label="A birthday surprise for Silvio">
+      <section class="retro-welcome" id="retro-welcome" aria-labelledby="retro-welcome-title" aria-describedby="retro-welcome-description">
+        <div class="retro-window">
+          <div class="retro-titlebar"><span aria-hidden="true">✦</span> MIRACLE SETUP v33.0 <span aria-hidden="true">✧</span></div>
+          <div class="retro-window-body">
+            <p class="retro-welcome-badge">★ SILVIO'S BIRTHDAY SPECIAL ★</p>
+            <h1 id="retro-welcome-title">WELCOME<br>2 HEAVEN!</h1>
+            <p id="retro-welcome-description">Your miracle is ready to launch.<br>Select your divine sound settings:</p>
+            <div class="retro-welcome-actions">
+              <button id="retro-watch-with-sound" type="button"><span aria-hidden="true">♪</span><strong>HOLY NOISE!</strong><small>Sound ON · divine beeps included</small></button>
+              <button id="retro-watch-quietly" type="button"><span aria-hidden="true">✧</span><strong>SILENT BUT BLESSED</strong><small>Sound OFF · same heavenly chaos</small></button>
+            </div>
+            <p class="retro-welcome-note">You can change modes anytime. Amen.</p>
+          </div>
+          <div class="retro-statusbar"><span>READY TO PARTY</span><span>XXXIII</span></div>
+        </div>
+      </section>
       <div class="stage-inner">
         <div class="sky" aria-hidden="true"></div>
         <div class="stars" aria-hidden="true"></div>

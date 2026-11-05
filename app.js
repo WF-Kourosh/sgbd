@@ -18,11 +18,14 @@ function start(){
   const speakerNode=document.getElementById('speaker');
   const announcement=document.getElementById('announcement');
   const lampButton=document.getElementById('lamp-button');
+  const welcome=document.getElementById('welcome');
+  const withSoundButton=document.getElementById('watch-with-sound');
+  const quietButton=document.getElementById('watch-quietly');
+  const playbackControls=document.querySelector('nav');
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const sound=new TheatreSound();
-  void sound.resume();
-  body.classList.add('js');sign.inert=true;
-  let startedAt=0, pausedAt=null, manualPause=false, ready=false, finished=false, skipped=false, frame=0, cueIndex=0, lastLine='', lastPhase='';
+  body.classList.add('js');sign.inert=true;playbackControls.inert=true;
+  let startedAt=0, pausedAt=null, manualPause=false, ready=false, hasStarted=false, choiceMade=false, choosing=false, finished=false, skipped=false, frame=0, cueIndex=0, lastLine='', lastPhase='';
   let bounds={width:root.clientWidth,height:root.clientHeight};
   const lastValues=new Map();
   const assets=['./assets/jesus-left-arm.png','./assets/foreman-left-arm.png','./assets/theater-stage.png','./assets/theater-wreckage.png'];
@@ -58,13 +61,12 @@ function start(){
   }
   const images=assets.map(src=>new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(true);img.onerror=()=>resolve(false);img.src=src;}));
   Promise.all(images).then(()=>{
-    ready=true;body.classList.add('ready');startedAt=performance.now();
-    if(document.hidden||manualPause){pausedAt=startedAt;body.classList.add('paused');}
-    if(skipped||reduced.matches)goToEnd();else requestTick();
+    ready=true;body.classList.add('ready');render(0);
+    if(choiceMade)beginPerformance();else withSoundButton.focus({preventScroll:true});
   });
-  function elapsed(now=performance.now()){return finished?DURATION:Math.max(0,(pausedAt??now)-startedAt);}
+  function elapsed(now=performance.now()){return !hasStarted?0:finished?DURATION:Math.max(0,(pausedAt??now)-startedAt);}
   function requestTick(){if(!frame)frame=requestAnimationFrame(tick);}
-  function tick(now){frame=0;if(!ready||pausedAt!==null)return;render(elapsed(now));if(!finished)requestTick();}
+  function tick(now){frame=0;if(!ready||!hasStarted||pausedAt!==null)return;render(elapsed(now));if(!finished)requestTick();}
   function render(time){
     const state=sceneAt(time,bounds.width,bounds.height);
     for(const [name,value]of Object.entries(state.values)){
@@ -81,8 +83,8 @@ function start(){
     document.getElementById('act-name').textContent=state.title;
     const visible=time>=29900, complete=time>=DURATION;
     sign.classList.toggle('is-visible',visible);sign.classList.toggle('is-ready',complete);sign.inert=!complete;
-    document.getElementById('skip-button').hidden=complete;
-    pauseButton.hidden=complete;
+    document.getElementById('skip-button').hidden=complete||!hasStarted;
+    pauseButton.hidden=complete||!hasStarted;
     while(cueIndex<SOUND_CUES.length&&SOUND_CUES[cueIndex][0]<=time){
       const [at,cue]=SOUND_CUES[cueIndex++];
       if(time-at<200&&!document.hidden)sound.cue(cue);
@@ -90,40 +92,54 @@ function start(){
     if(complete){finished=true;announcement.textContent='Buon compleanno, Silvio. Miracle under construction. The real surprise is still being built. Torna presto.';}
   }
   function goToEnd(){
-    skipped=true;if(!ready)return;sound.stop();cueIndex=SOUND_CUES.length;
+    skipped=true;if(!ready||!hasStarted)return;sound.stop();cueIndex=SOUND_CUES.length;
     finished=true;cancelAnimationFrame(frame);frame=0;render(DURATION);
   }
   function replay(){
-    if(!ready)return;sound.stop();finished=false;skipped=false;cueIndex=0;lastPhase='';lastLine='';
+    if(!ready||!hasStarted)return;sound.stop();finished=false;skipped=false;cueIndex=0;lastPhase='';lastLine='';
     body.classList.remove('lamp-on');lampButton.setAttribute('aria-pressed','false');document.querySelector('.lamp-plaque').hidden=true;
     startedAt=performance.now();pausedAt=document.hidden?startedAt:null;
     manualPause=false;body.classList.toggle('paused',document.hidden);pauseButton.setAttribute('aria-pressed','false');pauseButton.setAttribute('aria-label','Pause performance');pauseButton.textContent='Ⅱ';
+    if(document.hidden)sound.pause();else void sound.resume();
     if(reduced.matches){goToEnd();return;}render(0);requestTick();
   }
+  function updateSoundButton(){
+    soundButton.setAttribute('aria-pressed',String(sound.enabled));soundButton.innerHTML=`<span aria-hidden="true">♪</span> Sound ${sound.enabled?'on':'off'}`;
+  }
+  function beginPerformance(){
+    if(!ready||hasStarted)return;
+    hasStarted=true;body.classList.add('started');welcome.inert=true;playbackControls.inert=false;
+    replay();soundButton.focus({preventScroll:true});
+  }
+  async function chooseSound(withSound){
+    if(choosing||choiceMade)return;
+    choosing=true;withSoundButton.disabled=true;quietButton.disabled=true;
+    await sound.setEnabled(withSound);
+    updateSoundButton();choiceMade=true;choosing=false;
+    if(withSound&&!sound.enabled)announcement.textContent='Sound is unavailable. Starting quietly; you can try the sound button later.';
+    beginPerformance();
+  }
+  withSoundButton.addEventListener('click',()=>{void chooseSound(true);});
+  quietButton.addEventListener('click',()=>{void chooseSound(false);});
   document.getElementById('skip-button').addEventListener('click',goToEnd);
   document.getElementById('replay-button').addEventListener('click',()=>{replay();soundButton.focus({preventScroll:true});});
   soundButton.addEventListener('click',async()=>{
     soundButton.disabled=true;try{await sound.toggle();}finally{soundButton.disabled=false;}
-    soundButton.setAttribute('aria-pressed',String(sound.enabled));soundButton.innerHTML=`<span aria-hidden="true">♪</span> Sound ${sound.enabled?'on':'off'}`;
+    updateSoundButton();
     if(sound.enabled){if(pausedAt!==null)sound.pause();else sound.cue('chime');}
   });
-  function unlockSound(event){
-    if(document.hidden||pausedAt!==null||event.target instanceof Element&&event.target.closest('#sound-button'))return;
-    void sound.resume();
-  }
-  for(const event of ['pointerdown','pointerup','keydown','click'])document.addEventListener(event,unlockSound,{capture:true});
   lampButton.addEventListener('click',()=>{
     if(body.classList.contains('lamp-on'))return;body.classList.add('lamp-on');lampButton.setAttribute('aria-pressed','true');
     document.querySelector('.lamp-plaque').hidden=false;sound.cue('lamp');announcement.textContent='Now you can see that it’s still unfinished.';
   });
   function syncPause(){
-    if(!ready)return;
+    if(!ready||!hasStarted)return;
     if(document.hidden||manualPause){if(pausedAt===null)pausedAt=performance.now();body.classList.add('paused');sound.pause();cancelAnimationFrame(frame);frame=0;}
     else{if(pausedAt!==null)startedAt+=performance.now()-pausedAt;pausedAt=null;body.classList.remove('paused');sound.resume();if(!finished)requestTick();}
   }
   pauseButton.addEventListener('click',()=>{manualPause=!manualPause;pauseButton.setAttribute('aria-pressed',String(manualPause));pauseButton.setAttribute('aria-label',manualPause?'Resume performance':'Pause performance');pauseButton.textContent=manualPause?'▶':'Ⅱ';syncPause();});
   document.addEventListener('visibilitychange',syncPause);
-  reduced.addEventListener('change',event=>{if(event.matches)goToEnd();});
+  reduced.addEventListener('change',event=>{if(event.matches&&hasStarted)goToEnd();});
   new ResizeObserver(()=>{bounds={width:root.clientWidth,height:root.clientHeight};if(ready)render(elapsed());}).observe(root);
 }
 

@@ -1,3 +1,5 @@
+import {TheatreSound} from './audio.mjs';
+
 (() => {
   'use strict';
 
@@ -33,10 +35,19 @@
   const announcement = document.getElementById('sr-announcement');
   const workerLine = document.getElementById('worker-line');
   const lastWords = document.getElementById('last-words');
+  const welcome = document.getElementById('retro-welcome');
+  const withSoundButton = document.getElementById('retro-watch-with-sound');
+  const quietButton = document.getElementById('retro-watch-quietly');
+  const controls = document.querySelector('.controls');
+  const stage = document.querySelector('.stage-inner');
+  const sound = new TheatreSound();
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const requestedTheme = new URLSearchParams(location.search).get('theme');
   body.dataset.theme = ['cinema', 'retro'].includes(requestedTheme) ? requestedTheme : config.defaultTheme;
   document.documentElement.classList.add('js');
+  body.classList.add('awaiting-start');
+  controls.inert = true;
+  stage.inert = true;
 
   let startedAt = performance.now();
   let pausedAt = document.hidden ? startedAt : null;
@@ -44,20 +55,17 @@
   let lastMain = '';
   let lastSub = '';
   let lampWinkUntil = 0;
-  let soundOn = true;
+  let soundOn = false;
+  let hasStarted = false;
+  let choosing = false;
   let audio = null;
   let master = null;
   let impactWasActive = false;
   let lastShudder = -1;
   const activeVoices = new Set();
-  function unlockSound(event) {
-    if (!soundOn || document.hidden || pausedAt !== null || event?.target instanceof Element && event.target.closest('#sound-button')) return;
-    if (initAudio()) audio.resume().catch(() => {});
-  }
-  for (const event of ['pointerdown', 'pointerup', 'keydown', 'click']) document.addEventListener(event, unlockSound, { capture: true });
-  unlockSound();
 
   function currentElapsed(now = performance.now()) {
+    if (!hasStarted) return 0;
     return Math.max(0, (pausedAt === null ? now : pausedAt) - startedAt);
   }
 
@@ -81,20 +89,16 @@
     return text.slice(0, Math.max(0, Math.floor((time - delay) / speed)));
   }
 
-  function initAudio() {
-    if (audio) return true;
-    try {
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (!AudioContextClass) return false;
-      audio = new AudioContextClass();
-      master = audio.createGain();
-      master.gain.value = 0.18;
-      master.connect(audio.destination);
-      return true;
-    } catch (_) {
-      audio = null;
-      return false;
-    }
+  async function setSound(enabled) {
+    soundOn = false;
+    stopVoices();
+    soundOn = await sound.setEnabled(enabled);
+    audio = sound.context;
+    master = sound.master;
+    if (master && audio) master.gain.setValueAtTime(soundOn ? 0.18 : 0, audio.currentTime);
+    soundButton.setAttribute('aria-pressed', String(soundOn));
+    soundButton.textContent = soundOn ? '♪ Sound on' : '♪ Sound off';
+    return soundOn;
   }
 
   function note(frequency, delay, duration, wave = 'sine', volume = 0.22, endFrequency = frequency) {
@@ -193,6 +197,7 @@
   }
 
   function render(now) {
+    if (!hasStarted) return;
     const time = currentElapsed(now);
     const phase = phaseAt(time);
     if (phase !== previousPhase) {
@@ -264,6 +269,7 @@
   }
 
   function goToConstruction() {
+    if (!hasStarted) return;
     stopVoices();
     startedAt = (pausedAt === null ? performance.now() : pausedAt) - config.timings.construction;
     lampWinkUntil = 0;
@@ -276,6 +282,7 @@
   }
 
   function replay() {
+    if (!hasStarted) return;
     stopVoices();
     body.classList.remove('lamp-on', 'winking', 'blinking', 'gesturing', 'worker-installing', 'collapse-impact', 'buried', 'dying', 'dead');
     impactWasActive = false;
@@ -289,21 +296,35 @@
     if (reducedMotion.matches) goToConstruction();
   }
 
+  async function chooseSound(enabled) {
+    if (choosing || hasStarted) return;
+    choosing = true;
+    withSoundButton.disabled = true;
+    quietButton.disabled = true;
+    await setSound(enabled);
+    hasStarted = true;
+    body.classList.remove('awaiting-start');
+    body.classList.add('started');
+    welcome.inert = true;
+    controls.inert = false;
+    stage.inert = false;
+    startedAt = performance.now();
+    pausedAt = document.hidden ? startedAt : null;
+    body.classList.toggle('paused', document.hidden);
+    if (document.hidden) sound.pause();
+    if (reducedMotion.matches) goToConstruction();
+    requestAnimationFrame(render);
+    soundButton.focus({ preventScroll: true });
+  }
+
+  withSoundButton.addEventListener('click', () => chooseSound(true));
+  quietButton.addEventListener('click', () => chooseSound(false));
   soundButton.addEventListener('click', async () => {
-    if (soundOn) {
-      soundOn = false;
-      stopVoices();
-      if (master && audio) master.gain.setValueAtTime(0, audio.currentTime);
-    } else if (initAudio()) {
-      try {
-        await audio.resume();
-        soundOn = true;
-        master.gain.setValueAtTime(0.18, audio.currentTime);
-        playCue('enabled');
-      } catch (_) { soundOn = false; }
-    }
-    soundButton.setAttribute('aria-pressed', String(soundOn));
-    soundButton.textContent = soundOn ? '♪ Sound on' : '♪ Sound off';
+    soundButton.disabled = true;
+    try {
+      await setSound(!soundOn);
+      if (soundOn) playCue('enabled');
+    } finally { soundButton.disabled = false; }
   });
 
   skipButton.addEventListener('click', goToConstruction);
@@ -318,6 +339,7 @@
   });
 
   document.addEventListener('visibilitychange', () => {
+    if (!hasStarted) return;
     const now = performance.now();
     if (document.hidden && pausedAt === null) {
       pausedAt = now;
@@ -330,10 +352,8 @@
       if (soundOn && audio) audio.resume().catch(() => {});
     }
   });
-  reducedMotion.addEventListener?.('change', event => { if (event.matches) goToConstruction(); });
+  reducedMotion.addEventListener?.('change', event => { if (event.matches && hasStarted) goToConstruction(); });
 
-  if (document.hidden) body.classList.add('paused');
-  if (reducedMotion.matches) goToConstruction();
-  requestAnimationFrame(render);
+  withSoundButton.focus({ preventScroll: true });
 })();
 

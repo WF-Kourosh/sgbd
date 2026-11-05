@@ -15,27 +15,37 @@ function mockAudio(t,{blocked=false}={}){
   return control;
 }
 
-test('sound defaults on and attempts playback without the sound button',async t=>{
+test('sound defaults off and does not create an audio context before a choice',async t=>{
   const control=mockAudio(t);const sound=new TheatreSound();
-  assert.equal(sound.enabled,true);await sound.resume();
+  assert.equal(sound.enabled,false);await sound.resume();
+  assert.equal(sound.context,null);assert.equal(control.contexts,0);
+});
+test('an explicit sound choice starts audio',async t=>{
+  const control=mockAudio(t);const sound=new TheatreSound();
+  assert.equal(await sound.setEnabled(true),true);
   assert.equal(sound.context.state,'running');assert.equal(control.contexts,1);
 });
-test('blocked autoplay preserves the preference and retries the same context',async t=>{
+test('blocked audio stays off and can be retried with the sound button',async t=>{
   const control=mockAudio(t,{blocked:true});const sound=new TheatreSound();
-  await sound.resume();assert.equal(sound.enabled,true);assert.equal(sound.context.state,'suspended');
-  control.blocked=false;await sound.resume();await sound.resume();
+  await sound.setEnabled(true);assert.equal(sound.enabled,false);assert.equal(sound.context.state,'suspended');
+  control.blocked=false;await sound.toggle();await sound.resume();
   assert.equal(sound.context.state,'running');assert.equal(control.contexts,1);assert.equal(control.resumes,2);
 });
-test('muting prevents later interactions from unlocking sound',async t=>{
-  const control=mockAudio(t,{blocked:true});const sound=new TheatreSound();await sound.resume();
+test('muting prevents later playback resumes from enabling sound',async t=>{
+  const control=mockAudio(t);const sound=new TheatreSound();await sound.setEnabled(true);
   let stopped=false;sound.voices.add({stop(){stopped=true;}});
   await sound.toggle();assert.equal(sound.enabled,false);assert.equal(stopped,true);
-  control.blocked=false;await sound.resume();assert.equal(control.resumes,1);
+  await sound.resume();assert.equal(control.resumes,1);
   await sound.toggle();assert.equal(sound.enabled,true);assert.equal(sound.context.state,'running');
 });
 test('an unavailable audio API leaves the visual experience usable',async t=>{
   const previous=globalThis.window;globalThis.window={};
   t.after(()=>{if(previous===undefined)delete globalThis.window;else globalThis.window=previous;});
-  const sound=new TheatreSound();await sound.resume();sound.cue('chime');
-  assert.equal(sound.context,null);
+  const sound=new TheatreSound();await sound.setEnabled(true);sound.cue('chime');
+  assert.equal(sound.context,null);assert.equal(sound.enabled,false);
+});
+test('an unresolved resume cannot leave the opening choice stuck',async t=>{
+  mockAudio(t);window.AudioContext.prototype.resume=()=>new Promise(()=>{});
+  const sound=new TheatreSound();await sound.setEnabled(true);
+  assert.equal(sound.enabled,false);
 });

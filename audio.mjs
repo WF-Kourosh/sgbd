@@ -1,9 +1,12 @@
-// Sound is enabled by default. A blocked AudioContext is retried on interaction.
+// Create and resume audio only after an explicit sound choice.
 export class TheatreSound{
-  constructor(){this.enabled=true;this.context=null;this.master=null;this.voices=new Set();}
-  async toggle(){
-    if(this.enabled){this.enabled=false;this.stop();return;}
-    this.enabled=true;await this.resume();
+  constructor(){this.enabled=false;this.context=null;this.master=null;this.voices=new Set();}
+  toggle(){return this.setEnabled(!this.enabled);}
+  async setEnabled(enabled){
+    this.enabled=enabled;
+    if(!enabled){this.stop();return false;}
+    if(!await this.resume()){this.enabled=false;this.stop();}
+    return this.enabled;
   }
   voice(source,nodes,duration){this.voices.add(source);source.onended=()=>{this.voices.delete(source);source.disconnect();nodes.forEach(n=>n.disconnect());};source.start();source.stop(this.context.currentTime+duration+.04);}
   tone(hz,length=.3,volume=.2,type='sine',end=hz){
@@ -37,11 +40,17 @@ export class TheatreSound{
   stop(){for(const v of this.voices){try{v.stop();}catch{}}this.voices.clear();}
   pause(){if(this.context?.state==='running')this.context.suspend().catch(()=>{});}
   async resume(){
-    if(!this.enabled)return;
+    if(!this.enabled)return false;
+    let timer;
     try{
-      if(!this.context){const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return;this.context=new Audio();this.master=this.context.createGain();this.master.gain.value=.23;this.master.connect(this.context.destination);}
-      if(this.context.state!=='running'&&this.context.state!=='closed')await this.context.resume();
-    }catch{ /* Keep the preference; retry when a user gesture permits playback. */ }
+      if(!this.context){const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return false;this.context=new Audio();this.master=this.context.createGain();this.master.gain.value=.23;this.master.connect(this.context.destination);}
+      if(this.context.state==='closed')return false;
+      if(this.context.state!=='running')await Promise.race([
+        this.context.resume(),
+        new Promise(resolve=>{timer=setTimeout(resolve,1500);})
+      ]);
+      return this.enabled&&this.context.state==='running';
+    }catch{return false;}finally{clearTimeout(timer);}
   }
 }
 
