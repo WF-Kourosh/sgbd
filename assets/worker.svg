@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 700" role="img" aria-label="A friendly construction foreman wearing a hard hat and carrying a toolbox">
+  <defs>
+    <linearGradient id="worker-skin" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f4c9a0"/><stop offset=".55" stop-color="#e4aa7f"/><stop offset="1" stop-color="#c98968"/>
+    </linearGradient>
+    <linearGradient id="worker-hat" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fff297"/><stop offset=".45" stop-color="#ffd348"/><stop offset="1" stop-color="#d99521"/>
+    </linearGradient>
+    <linearGradient id="worker-cloth" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#52718b"/><stop offset=".5" stop-color="#36566f"/><stop offset="1" stop-color="#243b52"/>
+    </linearGradient>
+    <linearGradient id="worker-vest" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ffbe55"/><stop offset="1" stop-color="#e98632"/>
+    </linearGradient>
+    <linearGradient id="worker-toolbox" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#d35943"/><stop offset="1" stop-color="#943b36"/>
+    </linearGradient>
+  </defs>
+
+  <!-- The legs are separate shapes, ready to be animated while walking. -->
+  <g class="worker-leg worker-leg-left">
+    <path d="M151 485l-7 123 75 5 9-120z" fill="url(#worker-cloth)" stroke="#263846" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M144 587l74 5-1 22-75-3z" fill="#e2bb6b"/>
+    <path d="M141 609q31-9 76 3l4 28q-1 13-16 14l-90-1q-14-2-14-11 1-11 19-18z" fill="#34343a" stroke="#20252e" stroke-width="6"/>
+    <path d="M113 644h104" stroke="#a7a6a0" stroke-width="5"/>
+  </g>
+  <g class="worker-leg worker-leg-right">
+    <path d="M229 492l5 121 72-4-3-126z" fill="url(#worker-cloth)" stroke="#263846" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M233 591l72-5 1 21-72 6z" fill="#e2bb6b"/>
+    <path d="M234 611q34-12 73-5l17 18q19 4 20 17-1 11-16 12H240q-13-1-13-14z" fill="#34343a" stroke="#20252e" stroke-width="6"/>
+    <path d="M231 643h105" stroke="#a7a6a0" stroke-width="5"/>
+  </g>
+
+  <!-- Far arm gestures toward the stage. -->
+  <g class="worker-arm worker-arm-right">
+    <path d="M286 297q24-5 39 20l37 55-25 20-54-49z" fill="#e3ddcb" stroke="#5b514b" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M337 370q8-11 20-7l22 8q9 3 7 11-2 7-10 6l-12-3 12 9q5 6-1 10-6 4-12-1l-19-12q-9-6-7-21z" fill="url(#worker-skin)" stroke="#986248" stroke-width="4" stroke-linecap="round"/>
+    <path d="M344 393l11-15" stroke="#fff6e5" stroke-width="7"/>
+  </g>
+
+  <!-- Shirt, high-visibility vest and bib overalls. -->
+  <g class="worker-body">
+    <path d="M169 276q-44 8-53 39l3 125 20 65q77 25 171-2l12-65-5-120q-10-34-54-42z" fill="#ede6d6" stroke="#63544a" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M161 278q-27 5-42 26l7 140 31 26 30-31-4-157z M266 280q32 6 46 29l-5 135-26 25-26-30 1-157z" fill="url(#worker-vest)" stroke="#a66130" stroke-width="4"/>
+    <path d="M130 337l25 8-1 20-27-7z M286 345l27-9-1 21-26 9z" fill="#f9e7a8"/>
+    <path d="M161 302l27 10-2 86 23 13h35l23-13-3-87 25-9 5 127 15 61q-80 34-169 1l16-64z" fill="url(#worker-cloth)" stroke="#243b4e" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M183 313l15 4-2 83-13-2z M254 317l15-4-1 85-13 2z" fill="#314f67" stroke="#233a4c" stroke-width="3"/>
+    <circle cx="190" cy="396" r="6" fill="#ecc878"/><circle cx="262" cy="396" r="6" fill="#ecc878"/>
+    <path d="M192 416h68v36q-34 16-68 0z" fill="#456880" stroke="#263f50" stroke-width="4"/>
+    <path d="M198 425h56" stroke="#a7bec5" stroke-width="2" stroke-dasharray="3 4"/>
+    <path d="M145 477q81 27 161 0" fill="none" stroke="#1d3346" stroke-width="8"/>
+    <path d="M157 486l-2 24 M290 486l2 24" stroke="#9bb1b9" stroke-width="3" stroke-dasharray="3 4"/>
+    <!-- A restrained flag patch is a small character detail, not a label. -->
+    <g transform="translate(288 326) rotate(-10)">
+      <rect width="21" height="15" rx="2" fill="#262626" stroke="#fff7d5" stroke-width="1.5"/>
+      <path d="M1 6h19v4H1z" fill="#cc3340"/><path d="M1 10h19v4H1z" fill="#f5c841"/>
+    </g>
+  </g>
+
+  <!-- Neck and cheerful, slightly exasperated face. -->
+  <path d="M194 245l-1 44q34 31 69 0l-4-48" fill="url(#worker-skin)" stroke="#a96c52" stroke-width="5"/>
+  <g class="worker-head">
+    <path d="M157 172q-7-72 68-78 75-1 72 78l-5 62q-6 59-66 72-60-13-66-72z" fill="url(#worker-skin)" stroke="#875841" stroke-width="6"/>
+    <ellipse cx="157" cy="207" rx="16" ry="23" fill="#e6ad86" stroke="#946048" stroke-width="5"/>
+    <ellipse cx="295" cy="207" rx="16" ry="23" fill="#e6ad86" stroke="#946048" stroke-width="5"/>
+    <path d="M158 179q0-70 67-74 71-2 72 74-18-3-23-31-23 8-49-8-29 17-48 8-3 25-19 31z" fill="#82715b" stroke="#625345" stroke-width="4"/>
+    <path d="M178 191q13-12 27-4 M245 187q16-9 29 4" fill="none" stroke="#685343" stroke-width="6" stroke-linecap="round"/>
+    <ellipse cx="194" cy="207" rx="12" ry="9" fill="#fff7e8"/><ellipse cx="258" cy="207" rx="12" ry="9" fill="#fff7e8"/>
+    <circle cx="196" cy="208" r="5" fill="#36444a"/><circle cx="260" cy="208" r="5" fill="#36444a"/>
+    <circle cx="198" cy="206" r="1.8" fill="#fff"/><circle cx="262" cy="206" r="1.8" fill="#fff"/>
+    <path d="M222 208l-4 25q6 5 15 0" fill="none" stroke="#b97d5e" stroke-width="4" stroke-linecap="round"/>
+    <path d="M193 244q15-17 32-4 16-13 32 4-5 14-20 9-7-2-12-5-5 3-12 5-15 5-20-9z" fill="#79614d" stroke="#5e493b" stroke-width="3"/>
+    <path d="M210 268q15 11 30 0" fill="none" stroke="#8f5142" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="179" cy="230" r="7" fill="#d98977" opacity=".45"/><circle cx="273" cy="230" r="7" fill="#d98977" opacity=".45"/>
+    <!-- Hard hat -->
+    <path d="M157 157q2-57 68-63 65 6 68 63z" fill="url(#worker-hat)" stroke="#9f6b20" stroke-width="5"/>
+    <path d="M211 99l2 54h24l2-54q-13-8-28 0z" fill="#ffe87b" stroke="#d29b2c" stroke-width="3"/>
+    <path d="M155 147q70 9 140 0l13 11q4 9-7 12-76 10-153 0-11-3-7-12z" fill="#efb532" stroke="#9f6b20" stroke-width="5"/>
+    <path d="M156 157q69 8 138 0" fill="none" stroke="#fff4a5" stroke-width="4" opacity=".8"/>
+  </g>
+
+  <!-- Near arm carries a little toolbox. -->
+  <g class="worker-arm worker-arm-left">
+    <path d="M133 307q-20-2-28 19L80 405l24 13 43-69z" fill="#eee8d8" stroke="#66564a" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M79 401q8-8 17-2l10 10-2 22q-3 9-12 9-9 0-12-10l-5-16q-2-8 4-13z" fill="url(#worker-skin)" stroke="#986248" stroke-width="4"/>
+    <path d="M76 403l24 12" stroke="#fff6e5" stroke-width="7"/>
+    <g class="worker-toolbox">
+      <path d="M82 429v-11q0-9 9-9h15q9 0 9 9v11" fill="none" stroke="#343a3d" stroke-width="7" stroke-linecap="round"/>
+      <rect x="58" y="428" width="84" height="62" rx="7" fill="url(#worker-toolbox)" stroke="#70312f" stroke-width="5"/>
+      <path d="M60 448h80" stroke="#f0b37c" stroke-width="4"/>
+      <rect x="91" y="444" width="17" height="10" rx="2" fill="#e6bf72" stroke="#77582f" stroke-width="2"/>
+      <path d="M66 477h67" stroke="#f2aa83" stroke-width="2" opacity=".5"/>
+    </g>
+  </g>
+</svg>
