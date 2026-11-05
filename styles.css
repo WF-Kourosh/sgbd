@@ -221,6 +221,48 @@ body[data-theme='retro'] .worker-speech:after{background:#ffec38}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
 
+/* A shared birthday, interrupted by a rather final theatrical accident. */
+.joint-birthday-banner{position:absolute;z-index:5;left:11%;top:16%;width:min(36%,470px);padding:11px 16px;text-align:center;color:#f7e2b4;background:linear-gradient(105deg,#552638ed,#2d1c2bee);border:1px solid #d8b574;outline:1px solid #d8b57480;outline-offset:4px;box-shadow:0 8px 24px #0008;transform:rotate(-2deg);pointer-events:none}
+.joint-birthday-banner span,.joint-birthday-banner strong,.joint-birthday-banner small{display:block}
+.joint-birthday-banner span,.joint-birthday-banner small{font:700 clamp(.45rem,.67vw,.64rem)/1.4 system-ui,sans-serif;letter-spacing:.2em}
+.joint-birthday-banner strong{margin:3px 0;font:700 clamp(1.15rem,2.25vw,2.3rem)/1 Georgia,serif;letter-spacing:.08em}
+body[data-phase='collapse'] .joint-birthday-banner{animation:fall-away 4.6s .5s ease-in forwards}
+body[data-phase='lastwords'] .joint-birthday-banner,body[data-phase='worker'] .joint-birthday-banner,body[data-phase='construction'] .joint-birthday-banner{opacity:0;visibility:hidden}
+body[data-theme='retro'] .joint-birthday-banner{background:#ffea17;color:#200066;border:5px ridge #fff;outline:2px solid #f0f;box-shadow:5px 5px #000;transform:rotate(-3deg)}
+body[data-theme='retro'] .joint-birthday-banner strong{font-family:Impact,'Arial Black',sans-serif;text-shadow:2px 2px #ff80d7}
+body[data-theme='retro'] .joint-birthday-banner span,body[data-theme='retro'] .joint-birthday-banner small{font-family:'Courier New',monospace;letter-spacing:.04em}
+
+/* Do not let the scenery reappear during the pause between the crash and the foreman. */
+body[data-phase='lastwords'] .stage-proscenium,body[data-phase='lastwords'] .stage-curtain,body[data-phase='lastwords'] .age,body[data-phase='lastwords'] .arch,body[data-phase='lastwords'] .column,body[data-phase='lastwords'] .floating-piece,body[data-phase='lastwords'] .message-card,body[data-phase='lastwords'] .ticker,body[data-phase='lastwords'] .reveal-prop{opacity:0;visibility:hidden;pointer-events:none}
+body[data-phase='lastwords'] .sky,body[data-phase='lastwords'] .spotlight{opacity:0}
+body[data-phase='lastwords'] .rubble{opacity:.9}
+
+.last-words-card{position:absolute;z-index:9;left:53%;top:29%;width:min(36%,480px);padding:clamp(22px,3vw,40px);color:#f7ead2;background:linear-gradient(140deg,#332734f2,#191724f5);border:1px solid #d4af77;outline:1px solid #d4af7755;outline-offset:6px;box-shadow:0 18px 50px #0009;opacity:0;visibility:hidden;transform:translateY(12px);transition:opacity .65s,transform .65s,visibility .65s;pointer-events:none}
+.last-words-card:after{content:'';position:absolute;left:-11px;bottom:38%;width:18px;height:18px;background:#26202c;border-left:1px solid #d4af77;border-bottom:1px solid #d4af77;transform:rotate(45deg)}
+.last-words-kicker{display:block;color:#d9b97e;font:700 .63rem/1.4 system-ui,sans-serif;letter-spacing:.24em;margin-bottom:16px}
+#last-words{min-height:2.2em;margin:0;font:italic 500 clamp(1.7rem,3.6vw,3.7rem)/1.08 Georgia,serif;letter-spacing:-.025em}
+body[data-phase='lastwords'] .last-words-card{opacity:1;visibility:visible;transform:translateY(0)}
+body[data-theme='retro'] .last-words-card{background:#09077d;border:7px ridge #eee;outline:0;box-shadow:8px 8px #000;color:white}
+body[data-theme='retro'] .last-words-card:after{background:#09077d;border-color:#eee}
+body[data-theme='retro'] .last-words-kicker{font-family:'Courier New',monospace;color:#ffe638;letter-spacing:.08em}
+body[data-theme='retro'] #last-words{font:700 clamp(1.45rem,3vw,2.8rem)/1.1 'Courier New',monospace;color:#fff;text-shadow:2px 2px #f0a}
+
+body.dying.buried .character{transform:translateY(10%) rotate(-9deg);transform-origin:bottom center;transition:transform 1.5s ease-out}
+body.dead.buried .character,body.dead.buried[data-phase='construction'] .character{transform:translateY(12%) rotate(-10deg);transform-origin:bottom center;transition:transform 1.5s ease-out}
+body.dead .character .eye-left,body.dead .character .eye-right{animation:none!important;transform:scaleY(.04);transform-box:fill-box;transform-origin:center}
+body.dead .character .head{transform:rotate(-4deg);transform-box:fill-box;transform-origin:center;transition:transform 1.5s ease}
+body.dead .character .hardhat,body.dead[data-phase='construction'] .character .hardhat{opacity:0;transform:translateY(-100px)}
+@media(max-width:700px){
+ .joint-birthday-banner{top:9%;left:10%;width:80%;padding:7px 8px}.joint-birthday-banner strong{font-size:1.1rem}.joint-birthday-banner span,.joint-birthday-banner small{font-size:.45rem}
+ body[data-phase='lastwords'] .character,body[data-theme='retro'][data-phase='lastwords'] .character{left:-6%;bottom:18%;width:60%;height:48%}
+ body[data-phase='lastwords'] .wreckage{bottom:13%}
+ .last-words-card{left:10%;top:12%;width:80%;padding:20px 22px}.last-words-card:after{left:24%;bottom:-10px;border-left:0;border-top:0;border-right:1px solid #d4af77;border-bottom:1px solid #d4af77}
+ .last-words-kicker{font-size:.55rem;margin-bottom:10px}#last-words{font-size:clamp(1.6rem,7vw,2.5rem)}
+ body.dying.buried .character{transform:translateY(8%) rotate(-8deg)}
+ body.dead.buried .character,body.dead.buried[data-phase='construction'] .character,body[data-theme='retro'].dead.buried[data-phase='construction'] .character{transform:translateY(9%) rotate(-9deg)}
+}
+@media(prefers-reduced-motion:reduce){.joint-birthday-banner,.last-words-card,.character,.character .head{animation-duration:.001ms!important;transition-duration:.001ms!important}}
+
 /* The set doesn't just disappear: its pieces land on the stage and stay there. */
 .wreckage{position:absolute;left:0;bottom:0;width:53%;height:37%;z-index:6;pointer-events:none;visibility:hidden;overflow:visible}
 body[data-phase='collapse'] .wreckage,body.buried .wreckage{visibility:visible}

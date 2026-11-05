@@ -1,6 +1,6 @@
 # Silvio XXXIII
 
-A theatrical birthday miracle, currently under construction. Jesus welcomes Silvio and tries to unveil a grand surprise; the stage falls apart and leaves him buried in the scenery. A construction foreman then arrives to install the under-construction sign. Two browser-only prototypes share the same animated story:
+A theatrical birthday miracle, currently under construction. Jesus and Silvio celebrate turning 33 together, until the stage falls apart. Buried in the scenery, Jesus gives Silvio a final birthday wish before a construction foreman arrives to install the under-construction sign. Two browser-only prototypes share the same animated story:
 
 - Sacred Cinema: `/?theme=cinema`
 - Cursed Retro Internet: `/?theme=retro`
