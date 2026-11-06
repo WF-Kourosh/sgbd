@@ -311,10 +311,16 @@ button:disabled { cursor: default; }
 .nein { min-height: 1.4em; margin: 6px 0 4px; font-size: 13px; font-weight: 900; color: #c45a00; }
 .scores { width: 100%; border-collapse: collapse; margin: 4px 0 12px; font-size: 12px; font-weight: 900; background: #12005a; color: #fff; border: 4px ridge #ddd; }
 .scores caption { padding: 4px; background: #12005a; color: var(--yellow); letter-spacing: .2em; border: 4px ridge #ddd; border-bottom: 0; }
-.scores td { padding: 4px 7px; }
+.scores th { padding: 5px 7px 2px; font-size: 9px; font-weight: 700; letter-spacing: .14em; text-align: left; color: #c8c0ff; border-bottom: 2px dotted #c8c0ff55; }
+.scores td { padding: 4px 6px; }
+.scores td:nth-child(2) { white-space: nowrap; }
+.scores td:first-child { color: #c8c0ff; }
 .scores td:nth-child(3) { color: var(--cyan); font-size: 10px; }
-.scores td:last-child { text-align: right; color: var(--yellow); font-variant-numeric: tabular-nums; }
-.scores tr:first-child { background: #ff2fc044; }
+.scores th:last-child, .scores td:last-child { text-align: right; }
+.scores td:last-child { color: var(--yellow); font-variant-numeric: tabular-nums; }
+.scores .you { background: #ff2fc044; }
+.scores .you td:first-child { color: var(--yellow); }
+.scores .you.record td:nth-child(2)::after { content: ' NEW!'; color: var(--pink); font-size: 9px; animation: blink-hint .5s steps(2) 8; }
 .greeting { margin: 0 0 4px; font-weight: 900; color: #8a006e; font-size: 15px; text-align: center; }
 .german, .motto { margin: 0 0 4px; font-size: 12px; font-weight: 700; text-align: center; }
 .motto { letter-spacing: .08em; color: #6b5c9a; }
@@ -457,6 +463,7 @@ button:disabled { cursor: default; }
   .ufo svg, .alien-arm, .ufo-lights circle { animation: none; }
   .ufo-pass .ufo { animation: fade-flash 6s forwards; }
   .ufo-pass .ufo-beam { animation: none; }
+  .scores .you.record td:nth-child(2)::after { animation: none; }
   @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
   @keyframes fade-out { to { opacity: 0; } }
   @keyframes fade-flash { 0%, 100% { opacity: 0; } 15%, 85% { opacity: 1; } }

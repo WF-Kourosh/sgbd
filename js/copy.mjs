@@ -128,10 +128,14 @@ export const copy = {
       'Feierabend! Buon compleanno, Silvio. Go eat some cake.',
       'Nein.',
     ],
+    // Everyone scores in points for what their wind did. Silvio's score is his own: the stage alone
+    // is worth `destroyed`, so he always tops the table.
+    scoreColumns: ['RANK', 'NAME', 'BLEW DOWN', 'SCORE'],
     highScores: [
-      ['SILVIO', 'BLOW POWER', null],
-      ['MOSES', 'SEAS PARTED', '1'],
-      ['BIG BAD WOLF', 'HOUSES BLOWN', '2'],
+      { name: 'SILVIO', feat: '1 stage, 1 messiah', score: null },
+      { name: 'MOSES', feat: '1 Red Sea', score: 12000 },
+      { name: 'B.B. WOLF', feat: '2 of 3 houses', score: 2000 },
+      { name: 'KID (6)', feat: '6 candles + spit', score: 6 },
     ],
   },
   announcements: {
