@@ -24,6 +24,7 @@ Open `http://localhost:8765/`. The microphone only works on `localhost` or HTTPS
   taps, faster: about 10, then 19, then 30 taps.
 - `?debug=mic` shows the live mic numbers (level, flatness, noise floor, threshold, target) for tuning.
 - `?speed=3` plays the story three times faster.
+- On Android the phone buzzes along: taps, candles going out, the crack, the crash and the coin.
 
 ## How it's built
 
@@ -74,4 +75,4 @@ Without JavaScript, a static "Miracle under construction" page is shown.
 
 ## GitHub Pages
 
-Deploy from the root of `main`. All paths are relative. `retro.html` redirects old links here.
+Deploy from the root of `main`. All paths are relative.
