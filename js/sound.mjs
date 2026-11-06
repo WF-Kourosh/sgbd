@@ -39,6 +39,9 @@ export class TheatreSound{
       case'stall':this.tone(330,.6,.08,'square',160);break;
       case'gameover':[392,349,330,262].forEach((hz,i)=>this.later(()=>this.tone(hz,.32,.08,'square'),i*260));break;
       case'coin':this.tone(988,.08,.08,'square');this.later(()=>this.tone(1319,.4,.08,'square'),80);break;
+      case'switch':this.tone(2200,.03,.09,'square',1800);this.noise(.05,.25,3500);break;
+      case'fiat':[262,392,523,659].forEach((hz,i)=>this.later(()=>this.tone(hz,2.4,.045,'sine'),i*220));break;
+      case'ufo':this.tone(520,1.3,.035,'sine',820);this.later(()=>this.tone(820,1.3,.035,'sine',480),1300);this.later(()=>this.tone(480,1.6,.03,'sine',700),2600);break;
       case'nein':this.tone(196,.18,.08,'square');this.later(()=>this.tone(147,.3,.08,'square'),150);break;
       case'steps':this.noise(.13,.28,250);this.tone(95,.13,.1,'triangle',55);break;
       case'screw':this.tone(1200,.12,.07,'triangle',600);break;

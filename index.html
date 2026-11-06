@@ -17,7 +17,6 @@
       <div class="hud-lives"><span class="k">J.</span> <span class="hearts" id="hud-lives" aria-label="Lives: 3">♥♥♥</span></div>
       <div class="hud-controls">
         <button class="win-button" id="sound-button" type="button" aria-pressed="false"><span aria-hidden="true">♪</span> <span class="label">Sound off</span></button>
-        <button class="win-button" id="skip-button" type="button">Skip <span aria-hidden="true">↗</span></button>
       </div>
     </header>
 
@@ -215,6 +214,24 @@
         <p class="flash" id="flash" aria-hidden="true"></p>
       </div>
 
+      <div class="ufo" aria-hidden="true">
+        <span class="ufo-beam"></span>
+        <svg viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="60" cy="30" rx="24" ry="20" fill="#9ff3ff" fill-opacity=".45"/>
+          <g class="alien">
+            <path class="alien-arm" d="M66 37l9-10" stroke="#7cff6b" stroke-width="3.5" stroke-linecap="round"/>
+            <ellipse cx="60" cy="32" rx="8.5" ry="9.5" fill="#7cff6b" stroke="#1d5a16" stroke-width="2"/>
+            <ellipse cx="56.4" cy="31" rx="2.7" ry="3.8" fill="#111"/><ellipse cx="63.6" cy="31" rx="2.7" ry="3.8" fill="#111"/>
+          </g>
+          <ellipse cx="60" cy="30" rx="24" ry="20" fill="none" stroke="#371b68" stroke-width="3"/>
+          <ellipse cx="60" cy="45" rx="56" ry="14" fill="#c9c9dd" stroke="#371b68" stroke-width="4"/>
+          <ellipse cx="60" cy="41" rx="40" ry="6" fill="#ecebf7"/>
+          <g class="ufo-lights"><circle cx="22" cy="48" r="3.5" fill="#ff2fc0"/><circle cx="41" cy="52" r="3.5" fill="#ffe83a"/><circle cx="60" cy="53" r="3.5" fill="#19e3ff"/><circle cx="79" cy="52" r="3.5" fill="#ffe83a"/><circle cx="98" cy="48" r="3.5" fill="#ff2fc0"/></g>
+        </svg>
+      </div>
+      <div class="night" aria-hidden="true"></div>
+      <button class="fiat" id="fiat-button" type="button"><span><span aria-hidden="true">✧</span> <span data-copy="lux.button">Fiat lux</span></span><small data-copy="lux.hint">let there be light</small></button>
+
       <section class="dialogue" id="dialogue" hidden>
         <div class="speaker" id="speaker"></div>
         <p class="line"><span id="line"></span></p>
@@ -263,9 +280,7 @@
             <p class="greeting" lang="it">Buon compleanno, Silvio. Il meglio deve ancora venire.</p>
             <p class="german" lang="de">Baustelle. Natürlich.</p>
             <p class="motto" lang="la">ERRARE HUMANUM EST, SOFFIARE DIVINUM</p>
-            <p class="plaque" data-copy="workOrder.lampPlaque">Was that… a wink?</p>
             <div class="actions">
-              <button class="win-button" id="lamp-button" type="button" aria-pressed="false"><span aria-hidden="true">✧</span> Fiat lux</button>
               <button class="win-button" id="replay-button" type="button"><span aria-hidden="true">↺</span> Replay</button>
             </div>
           </div>

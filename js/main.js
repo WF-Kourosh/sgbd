@@ -69,12 +69,8 @@ soundButton.addEventListener('click', async () => {
   } finally { soundButton.disabled = false; }
 });
 
-$('skip-button').addEventListener('click', () => director.skip());
-$('replay-button').addEventListener('click', () => {
-  $('lamp-button').setAttribute('aria-pressed', 'false');
-  director.play();
-});
-$('lamp-button').addEventListener('click', event => director.lamp(event.currentTarget));
+$('replay-button').addEventListener('click', () => director.play());
+$('fiat-button').addEventListener('click', () => director.fiatLux());
 
 document.addEventListener('visibilitychange', () => {
   body.classList.toggle('paused', document.hidden);

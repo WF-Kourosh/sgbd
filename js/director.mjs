@@ -6,7 +6,7 @@ import { story } from './story.mjs';
 export class Cancelled extends Error {}
 
 const $ = id => document.getElementById(id);
-const FLAGS = ['eyes-closed', 'wind-1', 'wind-2', 'wind-3', 'buried', 'dead', 'installing', 'stalled', 'coined', 'lamp-on', 'winking', 'talking', 'blowing', 'holding', 'typing', 'finished'];
+const FLAGS = ['eyes-closed', 'wind-1', 'wind-2', 'wind-3', 'buried', 'dead', 'installing', 'stalled', 'coined', 'lights-out', 'lux', 'ufo-pass', 'winking', 'talking', 'blowing', 'holding', 'typing', 'finished'];
 
 export class Director {
   constructor({ sound, mic, copy, debug = false, speed = 1 }) {
@@ -23,7 +23,9 @@ export class Director {
       upload: $('upload-label'), uploadFill: $('upload-fill'), countdown: $('countdown'),
       coin: $('coin-button'), coinNote: $('coin-note'), progress: $('progress-button'),
       progressValue: $('progress-value'), nein: $('nein'), highScore: $('high-score'), sr: $('sr'),
-      cake: $('cake'), debug: $('debug'),
+      cake: $('cake'), debug: $('debug'), stage: document.querySelector('.stage'),
+      halo: document.querySelector('.jesus .halo'), night: document.querySelector('.night'),
+      fiat: $('fiat-button'), replay: $('replay-button'), ufo: document.querySelector('.ufo'),
     };
     this.epoch = 0;
     this.time = 0;
@@ -58,15 +60,6 @@ export class Director {
     story(d, this.copy).catch(error => { if (!(error instanceof Cancelled)) console.error(error); });
   }
 
-  skip() {
-    this.cancel();
-    this.reset({ keepPoints: true });
-    this.lives(0);
-    this.candles('gone');
-    ['wind-1', 'wind-2', 'wind-3', 'buried', 'dead', 'installing'].forEach(f => this.flag(f));
-    this.finish();
-  }
-
   cancel() {
     this.epoch++;
     for (const waiter of this.waiters) waiter.reject(new Cancelled());
@@ -74,7 +67,7 @@ export class Director {
     this.tasks.clear();
   }
 
-  reset({ keepPoints = false } = {}) {
+  reset() {
     this.cancel();
     this.stopMic();
     this.breath = null;
@@ -91,7 +84,8 @@ export class Director {
     this.setUpload('', 0);
     this.typing = null;
     this.holding.pointer = this.holding.key = false;
-    if (!keepPoints) { this.points = 0; this.peak = 0; }
+    this.points = 0;
+    this.peak = 0;
     this.score(0);
     this.lives(3);
     this.scene('party');
@@ -123,6 +117,12 @@ export class Director {
   task(fn) {
     this.tasks.add(fn);
     return () => this.tasks.delete(fn);
+  }
+
+  // Runs fn once, ms from now on the story clock. A replay cancels it.
+  after(ms, fn) {
+    const at = this.time + ms;
+    const stop = this.task(() => { if (this.time >= at) { stop(); fn(); } });
   }
 
   // ---------- Stage ----------
@@ -383,11 +383,11 @@ export class Director {
     this.flag('finished');
     this.body.dataset.mood = '';
     this.scene('construction');
-    // Skipping straight here leaves no blow power to brag about.
-    this.el.highScore.textContent = this.points >= 1 ? String(Math.round(this.points)).padStart(6, '0') : 'SKIPPED';
+    this.el.highScore.textContent = String(Math.round(this.points)).padStart(6, '0');
     this.el.progressValue.textContent = `${this.copy.workOrder.progress}%`;
     this.el.nein.textContent = '';
-    this.announce('Miracle under construction. Work order 33: one wish, ETA three days. Buon compleanno, Silvio.');
+    this.announce(this.copy.lux.dark);
+    this.after(1000, () => this.el.fiat.focus({ preventScroll: true }));
   }
 
   nein() {
@@ -399,16 +399,34 @@ export class Director {
     this.el.progress.classList.add('twitch');
   }
 
-  lamp(button) {
-    const on = !this.body.classList.contains('lamp-on');
-    this.flag('lamp-on', on);
-    button.setAttribute('aria-pressed', String(on));
-    this.cue('lamp');
-    if (on) {
+  // The foreman switched the lights off. Fiat lux calls a flying saucer: it glides in through
+  // the dark, stops over Jesus and beams the halo back on. The light spreads from the halo,
+  // Jesus winks, the work order fades in, and the saucer waves goodbye.
+  fiatLux() {
+    if (!this.body.classList.contains('lights-out') || this.body.classList.contains('ufo-pass')) return;
+    const halo = this.el.halo.getBoundingClientRect();
+    const stage = this.el.stage.getBoundingClientRect();
+    const hx = halo.left + halo.width / 2 - stage.left;
+    const hy = halo.top + halo.height / 2 - stage.top;
+    const ufo = this.el.ufo;
+    this.el.night.style.setProperty('--hx', hx + 'px');
+    this.el.night.style.setProperty('--hy', hy + 'px');
+    // The saucer parks over the halo, and its beam is just long enough to reach it.
+    ufo.style.setProperty('--ux', hx + 'px');
+    ufo.style.setProperty('--beam', Math.max(20, hy - (ufo.offsetTop + ufo.offsetHeight * 0.72)) + 'px');
+    this.flag('ufo-pass');
+    this.cue('ufo');
+    this.announce(this.copy.lux.visitor);
+    this.after(3700, () => {
+      this.flag('lux');
+      this.cue('fiat');
+      this.announce(this.copy.lux.announce);
+    });
+    this.after(6200, () => {
       this.flag('winking');
-      const until = this.time + 900;
-      const stop = this.task(() => { if (this.time >= until) { this.flag('winking', false); stop(); } });
-    }
+      this.after(900, () => this.flag('winking', false));
+    });
+    this.after(7000, () => this.el.replay.focus({ preventScroll: true }));
   }
 
   // ---------- Input ----------

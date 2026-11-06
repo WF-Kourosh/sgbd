@@ -106,3 +106,13 @@ test('the foreman only arrives after Jesus has died, and the coin is optional', 
   assert.equal(d.names().includes('cue:coin'), false);
   assert.ok(d.log.findIndex(([n, l]) => n === 'say' && l?.who === 'VORARBEITER') > index(d, 'scene:foreman'));
 });
+
+test('the foreman switches the lights off last, so the ending starts in the dark', async () => {
+  const d = fakeDirector();
+  await story(d, copy);
+  const lastForemanLine = d.log.findLastIndex(([n, l]) => n === 'say' && l === copy.foreman.at(-1));
+  const lightsOutLine = d.log.findIndex(([n, l]) => n === 'say' && l === copy.lightsOut);
+  assert.ok(lastForemanLine < lightsOutLine);
+  assert.ok(lightsOutLine < index(d, 'flag:lights-out'));
+  assert.ok(index(d, 'flag:lights-out') < index(d, 'finish'));
+});

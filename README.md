@@ -17,7 +17,9 @@ Open `http://localhost:8765/`. The microphone only works on `localhost` or HTTPS
 
 - **HOLY NOISE!** starts with sound, **SILENT BUT BLESSED** without. The sound button changes it anytime.
 - Tap the dialogue (or press Enter/Space) to skip ahead. Lines also move on by themselves.
-- **Skip** jumps to the ending. **Replay** starts again. **Fiat lux** turns on the work light. Watch Jesus.
+- At the end the foreman switches the lights off. **Fiat lux** calls a small flying saucer (Fiat Lux is
+  also a UFO religion): it beams the halo back on, the light spreads, and the work order appears.
+  Watch Jesus. **Replay** starts again.
 - No microphone, or you'd rather not: hold the button (or Space) and swipe across the flames.
 - `?debug=mic` shows the live mic numbers (level, flatness, noise floor, threshold, target) for tuning.
 - `?speed=3` plays the story three times faster.

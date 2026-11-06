@@ -100,6 +100,14 @@ export const copy = {
     { who: F, text: 'Erst mal: Baustelle.', mood: 'install' },
     { who: F, text: 'Habemus Baustelle.' },
   ],
+  lightsOut: { who: F, text: 'So. Feierabend.', sub: 'Licht aus.' },
+  lux: {
+    button: 'Fiat lux',
+    hint: 'let there be light',
+    dark: 'The foreman switched off the lights. Press Fiat lux to bring them back.',
+    visitor: 'A small flying saucer glides in through the dark and stops above Jesus.',
+    announce: 'It beams the halo back on. Light spreads across the stage, and the work order appears.',
+  },
   workOrder: {
     title: 'WORK ORDER #XXXIII',
     rows: [
@@ -119,7 +127,6 @@ export const copy = {
       ['MOSES', 'SEAS PARTED', '1'],
       ['BIG BAD WOLF', 'HOUSES BLOWN', '2'],
     ],
-    lampPlaque: 'Was that… a wink?',
   },
   announcements: {
     candlesOut: 'The candles go out.',
