@@ -38,8 +38,9 @@ export const copy = {
   },
   hint: {
     mic: 'Hold the button and blow into the mic',
-    finger: 'Hold the button — or swipe across the flames',
+    tap: ['Tap to blow! Keep tapping.', 'Faster! More taps!', 'FASTER!!! Everything you’ve got!'],
     button: 'Hold & blow',
+    tapButton: 'Tap! Tap! Tap!',
   },
   rounds: [
     {
@@ -61,17 +62,16 @@ export const copy = {
     {
       banner: 'ROUND 3 · FORTISSIME!!',
       before: [],
-      after: [
-        { who: J, text: 'YES! And now, by the power vested in me…', mood: 'gift' },
-      ],
+      after: [],
     },
   ],
   failsafe: { who: J, text: 'Close enough. I’m generous.' },
   victory: 'VENI, VIDI, FLAVI',
+  // The last gust is miracle-sized: it keeps going after Silvio stops, and Jesus notices.
   quake: [
-    { who: J, text: '…Did you hear that?', mood: 'worried' },
-    { who: J, text: 'Okay, you can stop now.', mood: 'worried' },
-    { who: J, text: 'Silvio? SILVIO, STOP BLOWING!', mood: 'panic', speed: 22 },
+    { who: J, text: 'YES! And now, by the power vested in m—', mood: 'gift', speed: 26, cut: true },
+    { who: J, text: 'Silvio… you can stop now.', mood: 'worried', speed: 28, linger: 650, cue: 'screw' },
+    { who: J, text: 'You already stopped?! Then who’s still blo—', mood: 'panic', speed: 22, cut: true },
   ],
   culpa: 'MEA CULPA',
   destroyed: 33000,

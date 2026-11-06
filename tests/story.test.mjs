@@ -72,10 +72,10 @@ test('no microphone falls back to the finger, with an excuse when it was refused
   assert.equal(chose.said().includes(copy.mic.denied.text), false);
 });
 
-test('the failsafe gets its own generous line', async () => {
+test('the failsafe gets its own generous line, except in the final rush', async () => {
   const d = fakeDirector({ blowReason: 'failsafe' });
   await story(d, copy);
-  assert.equal(d.said().filter(t => t === copy.failsafe.text).length, 3);
+  assert.equal(d.said().filter(t => t === copy.failsafe.text).length, 2);
   const normal = fakeDirector();
   await story(normal, copy);
   assert.equal(normal.said().includes(copy.failsafe.text), false);
@@ -115,4 +115,22 @@ test('the foreman switches the lights off last, so the ending starts in the dark
   assert.ok(lastForemanLine < lightsOutLine);
   assert.ok(lightsOutLine < index(d, 'flag:lights-out'));
   assert.ok(index(d, 'flag:lights-out') < index(d, 'finish'));
+});
+
+test('the stage starts coming down the moment the last candle goes out', async () => {
+  const d = fakeDirector();
+  await story(d, copy);
+  const gone = d.log.findIndex(([n, s]) => n === 'candles' && s === 'gone');
+  const quake = index(d, 'scene:quake');
+  assert.ok(gone < quake);
+  assert.ok(d.log.slice(gone, quake).every(([n]) => n !== 'say' && n !== 'wait'));
+});
+
+test('from the last blow to the crash takes a few seconds, not a speech', () => {
+  const typing = line => line.text.length * (line.speed ?? 34);
+  const linger = line => line.linger ?? (line.cut ? 450 : 1500 + line.text.length * 38);
+  const ms = copy.quake.reduce((sum, line) => sum + typing(line) + linger(line), 0);
+  assert.ok(ms < 5500, `quake lines take ${ms} ms`);
+  assert.ok(copy.quake.at(-1).cut);
+  assert.match(copy.quake.map(l => l.text).join(' '), /stopped/);
 });
