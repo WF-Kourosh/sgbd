@@ -1,33 +1,67 @@
-# Silvio XXXIII
+# Jesus & Silvio · XXXIII
 
-A 33-second painted puppet-theater birthday film. Jesus and Silvio celebrate turning 33 together. Jesus walks toward a covered surprise and pulls its cord; a screw drops, the banner sags, and the set falls apart. His final birthday wish gives way to the construction foreman, who plants posts, rolls out tape, and installs the ending.
-
-- Rebuilt Sacred Cinema: `/` (also `/?theme=cinema`)
-- Preserved Cursed Retro Internet prototype: `/retro.html?theme=retro` (also `/?theme=retro`)
+An arcade birthday for Silvio, who turns 33, the same age as Jesus. Jesus has a cake for both of them
+and an empty box. The present is whatever Silvio wishes for: he wishes, blows out the candles, and Jesus
+miracles it into the box. Silvio blows into his microphone, Jesus keeps asking for harder, and the stage
+comes down on him before he can deliver. His last words: the present was ready, and Silvio would have
+loved it. A `CONTINUE?` countdown stalls at **3 DAYS**, the German foreman arrives, and the ending
+is a work order: *Miracle under construction.*
 
 ## Preview locally
-
-From this directory run:
 
 ```sh
 python -m http.server 8765
 ```
 
-Open `http://localhost:8765/` or `http://localhost:8765/?theme=retro`. Sacred Cinema waits at an opening invitation: **A miracle with fanfare** unlocks audio through that click, and **A quiet miracle** starts silently. Retro has its own setup window with **HOLY NOISE!** and **SILENT BUT BLESSED**. Each experience begins after the choice, and the sound button can change it anytime. Use **Pause** in Cinema to hold a scene, **Skip intro** to see the ending, and **Replay** to start over.
+Open `http://localhost:8765/`. The microphone only works on `localhost` or HTTPS (GitHub Pages is HTTPS).
 
-`timeline.mjs` defines all scene positions, expressions, dialogue and sound cue times. `app.js` renders that clock, builds the layered painted puppets from transparent sprite sheets, and handles controls. `audio.mjs` creates synthesized audio only after an explicit sound choice, with a bounded startup attempt so playback can continue quietly if audio is unavailable. Playback pauses when the tab is hidden; reduced-motion visitors get the final birthday scene after the opening choice. Static birthday content remains available without JavaScript. `retro.html`, `retro.css` and `retro.js` preserve the earlier prototype.
+- **HOLY NOISE!** starts with sound, **SILENT BUT BLESSED** without. The sound button changes it anytime.
+- Tap the dialogue (or press Enter/Space) to skip ahead. Lines also move on by themselves.
+- **Skip** jumps to the ending. **Replay** starts again. **Fiat lux** turns on the work light. Watch Jesus.
+- No microphone, or you'd rather not: hold the button (or Space) and swipe across the flames.
+- `?debug=mic` shows the live mic numbers (level, flatness, noise floor, threshold, target) for tuning.
+- `?speed=3` plays the story three times faster.
 
-All assets are local. The painted puppet sheets, scenery and wreckage are in `assets/`; SVG viewport clips isolate the puppet parts without changing the source images. The character prompt briefs are in `assets/puppet-prompts.md`.
+## How it's built
+
+No build step and no backend. Everything is local: inline SVG characters, CSS scenery and synthesized sound.
+
+| File | What it does |
+|---|---|
+| `js/copy.mjs` | Every line of dialogue and label (English, Italian, German, Latin). Change jokes here. |
+| `js/story.mjs` | The screenplay, scene by scene. It only talks to a director, so tests can run it. |
+| `js/director.mjs` | Runs the screenplay on the page: one animation-frame clock, typewriter dialogue, input. |
+| `js/blow.mjs` | Candle-blowing math: calibration, adaptive noise floor, breath vs. voice, rounds, failsafe. |
+| `js/mic.mjs` | Microphone access and analysis. Audio is analysed in the tab, never recorded or sent. |
+| `js/sound.mjs` | Synthesized sound effects, started only after an explicit sound choice. |
+| `css/arcade.css` | Stage, characters, collapse, overlays. Sizes follow the stage, from phone to desktop. |
+
+### Blowing out the candles
+
+1. One second of silence measures the room. The median ignores a cough.
+2. Silvio holds the button (or the cake, or Space) while blowing, so room noise alone does nothing.
+3. A blow counts when low-frequency energy reaches the round's target for about a quarter second.
+   Short claps don't last long enough. Voices are harmonic (low spectral flatness) and only count half.
+4. Each round needs more breath (×1, ×1.2, ×1.4), capped so a phone mic can always reach it.
+5. While nobody is blowing, the noise floor keeps adapting to the room.
+6. After about 8 seconds of real effort a round succeeds anyway: *"Close enough. I'm generous."*
+
+Browser voice processing (echo cancellation, noise suppression, auto gain) is turned off, because it
+removes exactly the rumble of a blow.
 
 ## Checks
 
 ```sh
-node --test tests/audio.test.mjs tests/timeline.test.mjs tests/retro-start.test.mjs
-node --check app.js
+node --test tests/
 ```
 
-Tests cover act boundaries, the last words preceding the foreman, persistent fallen scenery, construction order, phone-size calculations, sound opt-in, the Retro opening choices, and the silence around the final wish.
+Tests cover the blow math (calibration, sustain gate, voice penalty, adaptive floor, failsafe, finger
+mode), the story order (wish before candles, two relights, mic released before the collapse, death
+before the foreman, countdown stalling at 3) and sound opt-in.
+
+Paused tabs pause the story. With reduced motion, nothing shakes or flies and the collapse is a fade.
+Without JavaScript, a static "Miracle under construction" page is shown.
 
 ## GitHub Pages
 
-Configure GitHub Pages to deploy from the root of the `main` branch, then push the chosen version. All runtime assets use relative paths; there is no build step or backend. The retro query remains a review link to the preserved prototype.
+Deploy from the root of `main`. All paths are relative. `retro.html` redirects old links here.

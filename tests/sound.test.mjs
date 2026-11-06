@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {TheatreSound} from '../audio.mjs';
+import {TheatreSound} from '../js/sound.mjs';
 
 function mockAudio(t,{blocked=false}={}){
   const previous=globalThis.window;

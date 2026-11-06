@@ -1,6 +1,6 @@
 // Create and resume audio only after an explicit sound choice.
 export class TheatreSound{
-  constructor(){this.enabled=false;this.context=null;this.master=null;this.voices=new Set();}
+  constructor(){this.enabled=false;this.context=null;this.master=null;this.voices=new Set();this.timers=new Set();}
   toggle(){return this.setEnabled(!this.enabled);}
   async setEnabled(enabled){
     this.enabled=enabled;
@@ -26,6 +26,20 @@ export class TheatreSound{
     switch(name){
       case'chime':this.tone(523,.8,.12);this.tone(659,.9,.08);this.tone(784,1,.06);break;
       case'reveal':this.tone(392,1,.12);this.tone(494,1.2,.1);this.tone(587,1.3,.08);break;
+      case'blip':this.tone(880,.035,.025,'square');break;
+      case'select':this.tone(660,.08,.07,'square');this.later(()=>this.tone(990,.12,.07,'square'),70);break;
+      case'start':[523,659,784,1047].forEach((hz,i)=>this.later(()=>this.tone(hz,.16,.08,'square'),i*90));break;
+      case'upload':[392,523,659].forEach((hz,i)=>this.later(()=>this.tone(hz,.12,.06,'square'),i*120));break;
+      case'round':this.tone(440,.1,.08,'square');this.later(()=>this.tone(440,.1,.08,'square'),160);this.later(()=>this.tone(880,.3,.09,'square'),320);break;
+      case'whoosh':this.noise(.7,.5,1800);break;
+      case'relight':this.tone(300,.25,.06,'triangle',900);this.noise(.12,.2,3000);break;
+      case'victory':[523,659,784,1047,784,1047].forEach((hz,i)=>this.later(()=>this.tone(hz,.18,.08,'square'),i*110));break;
+      case'creak':this.tone(140,.9,.08,'sawtooth',95);break;
+      case'tick':this.tone(1320,.06,.06,'square');break;
+      case'stall':this.tone(330,.6,.08,'square',160);break;
+      case'gameover':[392,349,330,262].forEach((hz,i)=>this.later(()=>this.tone(hz,.32,.08,'square'),i*260));break;
+      case'coin':this.tone(988,.08,.08,'square');this.later(()=>this.tone(1319,.4,.08,'square'),80);break;
+      case'nein':this.tone(196,.18,.08,'square');this.later(()=>this.tone(147,.3,.08,'square'),150);break;
       case'steps':this.noise(.13,.28,250);this.tone(95,.13,.1,'triangle',55);break;
       case'screw':this.tone(1200,.12,.07,'triangle',600);break;
       case'shake':this.noise(.65,.7,400);this.tone(75,.5,.3,'triangle',38);this.tone(185,.3,.03,'sawtooth',90);break;
@@ -37,7 +51,9 @@ export class TheatreSound{
       case'lamp':this.tone(660,.3,.1);this.tone(880,.4,.08);break;
     }
   }
-  stop(){for(const v of this.voices){try{v.stop();}catch{}}this.voices.clear();}
+  // Short arpeggios are scheduled with timers so stop() can cancel the notes that haven't started.
+  later(play,ms){const id=setTimeout(()=>{this.timers.delete(id);play();},ms);this.timers.add(id);}
+  stop(){for(const id of this.timers)clearTimeout(id);this.timers.clear();for(const v of this.voices){try{v.stop();}catch{}}this.voices.clear();}
   pause(){if(this.context?.state==='running')this.context.suspend().catch(()=>{});}
   async resume(){
     if(!this.enabled)return false;
