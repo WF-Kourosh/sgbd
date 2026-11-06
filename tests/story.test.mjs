@@ -151,3 +151,12 @@ test('the room is measured only after the shush has finished', async () => {
   const shush = d.log.findIndex(([n, l]) => n === 'say' && l === copy.mic.calibrating);
   assert.ok(shush !== -1 && shush < index(d, 'calibrate'));
 });
+
+test('Silvio tops the high scores however little he blew', () => {
+  const [silvio, ...others] = copy.workOrder.highScores;
+  assert.equal(silvio.score, null);
+  const scores = others.map(row => row.score);
+  assert.deepEqual(scores, [...scores].sort((a, b) => b - a));
+  assert.ok(scores.every(score => score < copy.destroyed));
+  assert.equal(copy.workOrder.scoreColumns.length, 4);
+});

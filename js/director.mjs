@@ -427,7 +427,8 @@ export class Director {
     this.flag('finished');
     this.body.dataset.mood = '';
     this.scene('construction');
-    this.el.highScore.textContent = String(Math.round(this.points)).padStart(6, '0');
+    this.el.highScore.textContent = '000000';
+    this.el.highScore.closest('tr').classList.remove('record');
     this.el.progressValue.textContent = `${this.copy.workOrder.progress}%`;
     this.el.nein.textContent = '';
     this.announce(this.copy.lux.dark);
@@ -470,7 +471,22 @@ export class Director {
       this.flag('winking');
       this.after(900, () => this.flag('winking', false));
     });
+    this.after(6900, () => this.tally());
     this.after(7000, () => this.el.replay.focus({ preventScroll: true }));
+  }
+
+  // Silvio's score rolls up once the work order is in view, like the tally on an arcade table.
+  tally(ms = 1600) {
+    const total = Math.round(this.points);
+    const begin = this.time;
+    const stop = this.task(() => {
+      const t = Math.min(1, (this.time - begin) / ms);
+      this.el.highScore.textContent = String(Math.round(total * (1 - (1 - t) ** 3))).padStart(6, '0');
+      if (t < 1) return;
+      stop();
+      this.el.highScore.closest('tr').classList.add('record');
+      this.cue('coin');
+    });
   }
 
   // ---------- Input ----------

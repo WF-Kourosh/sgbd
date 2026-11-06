@@ -19,14 +19,23 @@ $('work-order-rows').replaceChildren(...copy.workOrder.rows.flatMap(([term, deta
   dd.textContent = detail;
   return [dt, dd];
 }));
-$('high-scores').replaceChildren(...copy.workOrder.highScores.map(([name, label, score], index) => {
+const cells = (tag, texts) => texts.map(text => {
+  const cell = document.createElement(tag);
+  cell.textContent = text;
+  return cell;
+});
+const header = document.createElement('tr');
+header.append(...cells('th', copy.workOrder.scoreColumns));
+$('high-scores-head').replaceChildren(header);
+const rank = n => `${n}${['ST', 'ND', 'RD'][n - 1] ?? 'TH'}`;
+$('high-scores').replaceChildren(...copy.workOrder.highScores.map(({ name, feat, score }, index) => {
   const row = document.createElement('tr');
-  for (const text of [`${index + 1}.`, name, label, score ?? '']) {
-    const cell = document.createElement('td');
-    cell.textContent = text;
-    row.append(cell);
+  row.append(...cells('td', [rank(index + 1), name, feat, String(score ?? 0).padStart(6, '0')]));
+  // Silvio's row is filled in at the end, with the points he actually scored.
+  if (score === null) {
+    row.className = 'you';
+    row.lastChild.id = 'high-score';
   }
-  if (score === null) row.lastChild.id = 'high-score';
   return row;
 }));
 
