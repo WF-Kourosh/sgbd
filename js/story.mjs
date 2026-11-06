@@ -35,7 +35,8 @@ export async function lungs(d, c) {
   d.scene('lungs');
   const choice = await d.say(c.mic.prompt, { choices: c.mic.choices });
   if (choice === 'mic' && await d.startMic()) {
-    d.show(c.mic.calibrating);
+    // The room is measured once the line has typed out and Silvio has gone quiet to read it.
+    await d.say(c.mic.calibrating);
     await d.calibrate();
     return 'mic';
   }
@@ -87,12 +88,14 @@ export async function collapse(d, c) {
   d.quiet();
   d.announce(c.announcements.collapse);
   d.cue('crack');
+  d.lives(2);
   await d.wait(700);
   d.cue('crash');
   await d.wait(1300);
   d.cue('impact');
   d.flag('buried');
-  d.lives(0);
+  // He keeps his last heart for his last words.
+  d.lives(1);
   d.score(c.destroyed);
   d.banner(c.culpa);
   await d.wait(2400);
@@ -102,6 +105,7 @@ export async function lastWords(d, c) {
   d.scene('lastwords');
   for (const line of c.lastWords) await d.say(line);
   d.flag('dead');
+  d.lives(0);
   d.cue('silence');
   d.announce(c.announcements.dead);
   await d.wait(1800);
@@ -121,7 +125,7 @@ export async function continueScreen(d, c) {
   d.countdown(`${c.countdownStall} ${c.days}`);
   d.cue('stall');
   await d.wait(900);
-  if (await d.coin(9000)) {
+  if (await d.coin(5500)) {
     d.cue('coin');
     await d.wait(3600);
   }

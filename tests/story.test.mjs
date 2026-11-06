@@ -134,3 +134,20 @@ test('from the last blow to the crash takes a few seconds, not a speech', () => 
   assert.ok(copy.quake.at(-1).cut);
   assert.match(copy.quake.map(l => l.text).join(' '), /stopped/);
 });
+
+test('Jesus loses a heart at the crack, one at the impact, and the last when he dies', async () => {
+  const d = fakeDirector();
+  await story(d, copy);
+  const hearts = d.log.filter(([name]) => name === 'lives').map(([, n]) => n);
+  assert.deepEqual(hearts, [3, 2, 1, 0]);
+  const lastHeart = d.log.findIndex(([n, h]) => n === 'lives' && h === 1);
+  assert.ok(lastHeart < d.log.findIndex(([n, l]) => n === 'say' && l === copy.lastWords[0]));
+  assert.ok(index(d, 'flag:dead') < d.log.findIndex(([n, h]) => n === 'lives' && h === 0));
+});
+
+test('the room is measured only after the shush has finished', async () => {
+  const d = fakeDirector();
+  await story(d, copy);
+  const shush = d.log.findIndex(([n, l]) => n === 'say' && l === copy.mic.calibrating);
+  assert.ok(shush !== -1 && shush < index(d, 'calibrate'));
+});

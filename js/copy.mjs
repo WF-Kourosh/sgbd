@@ -33,10 +33,11 @@ export const copy = {
       { id: 'finger', label: '☝ No mic, use finger' },
     ],
     denied: { who: J, text: 'No microphone? Doubting Thomas, huh?', sub: 'Fine. Use your finger and poke the candles out.' },
-    calibrating: { who: J, text: 'Shh… SILENTIUM.', sub: 'Let me listen to the room first.' },
+    calibrating: { who: J, text: 'Shh… SILENTIUM.', sub: 'Let me listen to the room first.', linger: 0 },
   },
   hint: {
     mic: 'Hold the button and blow into the mic',
+    nudge: 'I hear you! Now hold the button while you blow.',
     tap: ['Tap to blow! Keep tapping.', 'Faster! More taps!', 'FASTER!!! Everything you’ve got!'],
     button: 'Hold & blow',
     tapButton: 'Tap! Tap! Tap!',
@@ -70,7 +71,7 @@ export const copy = {
   quake: [
     { who: J, text: 'YES! And now, by the power vested in m—', mood: 'gift', speed: 26, cut: true },
     { who: J, text: 'Silvio… you can stop now.', mood: 'worried', speed: 28, linger: 650, cue: 'screw' },
-    { who: J, text: 'You already stopped?! That’s just the shockwa—', mood: 'panic', speed: 22, cut: true },
+    { who: J, text: 'You already stopped?! That’s just the shockwa—', mood: 'panic', speed: 22, cut: true, linger: 650 },
   ],
   culpa: 'MEA CULPA',
   destroyed: 33000,
