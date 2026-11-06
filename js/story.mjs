@@ -134,4 +134,9 @@ export async function foreman(d, c) {
     await d.say(line);
   }
   d.cue('hammer');
+  await d.wait(900);
+  await d.say(c.lightsOut);
+  d.flag('lights-out');
+  d.cue('switch');
+  await d.wait(1400);
 }
