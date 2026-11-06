@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { BLOW, BreathMeter, FingerWind, calibrate, flatness, roundTarget, thresholdFor } from '../js/blow.mjs';
+import { BLOW, BreathMeter, TAP_ROUNDS, TapWind, calibrate, flatness, roundTarget, thresholdFor } from '../js/blow.mjs';
 
 const frames = (meter, count, frame) => { let state; for (let i = 0; i < count; i++) state = meter.push(frame); return state; };
 
@@ -71,23 +71,49 @@ test('real effort that never reaches the target still wins eventually', () => {
   assert.equal(state.done, 'failsafe');
 });
 
-test('finger mode: holding fills the meter, later rounds take longer', () => {
-  const time = round => {
-    const wind = new FingerWind();
-    wind.setRound(round);
-    let ms = 0;
-    while (!wind.push({ dt: 16, holding: true }).done) ms += 16;
-    return ms;
-  };
-  assert.ok(time(0) < time(1));
-  assert.ok(time(1) < time(2));
-  assert.ok(time(2) < BLOW.failsafeMs);
+// Taps at a steady pace until the round ends; returns how many taps it took and why it ended.
+function tapAt(round, perSecond) {
+  const wind = new TapWind();
+  wind.setRound(round);
+  const gap = 1000 / perSecond;
+  let taps = 0;
+  let next = 0;
+  for (let ms = 0; ms < 20000; ms += 10) {
+    const tap = ms >= next ? 1 : 0;
+    if (tap) { taps++; next += gap; }
+    const state = wind.push({ dt: 10, taps: tap });
+    if (state.done) return { taps, ms, done: state.done };
+  }
+  return { taps, done: null };
+}
+
+test('tap mode: every round asks for more taps at a faster pace', () => {
+  for (let i = 1; i < TAP_ROUNDS.length; i++) {
+    assert.ok(TAP_ROUNDS[i].taps > TAP_ROUNDS[i - 1].taps);
+    assert.ok(TAP_ROUNDS[i].pace > TAP_ROUNDS[i - 1].pace);
+  }
+  const counts = [0, 1, 2].map(round => tapAt(round, 7));
+  assert.ok(counts.every(c => c.done === 'taps'));
+  assert.ok(counts[0].taps < counts[1].taps && counts[1].taps < counts[2].taps);
 });
 
-test('finger mode: swiping across the flames adds gusts', () => {
-  const wind = new FingerWind();
-  const state = frames(wind, 40, { dt: 16, holding: false, swipe: 0.08 });
-  assert.equal(state.done, 'breath');
+test('tap mode: a pace that wins round 1 is too slow for the last round', () => {
+  assert.equal(tapAt(0, 3).done, 'taps');
+  assert.equal(tapAt(2, 3).done, 'failsafe');
+});
+
+test('tap mode: a quick tapper finishes every round before the failsafe', () => {
+  for (const round of [0, 1, 2]) assert.ok(tapAt(round, 7).ms < BLOW.failsafeMs);
+});
+
+test('tap mode: the wind dies down when the tapping stops', () => {
+  const wind = new TapWind();
+  wind.push({ dt: 10, taps: 5 });
+  const before = wind.power;
+  frames(wind, 100, { dt: 10, taps: 0 });
+  assert.ok(wind.power < before);
+  assert.equal(wind.done, null);
+  assert.equal(wind.effort < 1000, true);
 });
 
 test('spectral flatness tells noise from a harmonic stack', () => {

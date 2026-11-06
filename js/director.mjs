@@ -1,12 +1,12 @@
 // Runs the screenplay on the page: one animation-frame clock (so a hidden tab pauses everything),
 // a typewriter dialogue box, and the inputs Silvio uses to wish, blow and insert coins.
-import { BLOW, BreathMeter, FingerWind, calibrate } from './blow.mjs';
+import { BLOW, BreathMeter, TapWind, calibrate } from './blow.mjs';
 import { story } from './story.mjs';
 
 export class Cancelled extends Error {}
 
 const $ = id => document.getElementById(id);
-const FLAGS = ['eyes-closed', 'wind-1', 'wind-2', 'wind-3', 'buried', 'dead', 'installing', 'stalled', 'coined', 'lights-out', 'lux', 'ufo-pass', 'winking', 'talking', 'blowing', 'holding', 'typing', 'finished'];
+const FLAGS = ['eyes-closed', 'wind-1', 'wind-2', 'wind-3', 'buried', 'dead', 'installing', 'stalled', 'coined', 'lights-out', 'lux', 'ufo-pass', 'winking', 'talking', 'blowing', 'holding', 'straining', 'typing', 'finished'];
 
 export class Director {
   constructor({ sound, mic, copy, debug = false, speed = 1 }) {
@@ -18,7 +18,7 @@ export class Director {
     this.body = document.body;
     this.el = {
       score: $('hud-score'), lives: $('hud-lives'), dialogue: $('dialogue'), speaker: $('speaker'),
-      line: $('line'), sub: $('subline'), choices: $('choices'), hold: $('hold-button'), hint: $('hint'),
+      line: $('line'), sub: $('subline'), choices: $('choices'), hold: $('hold-button'), holdLabel: $('hold-label'),
       meter: $('meter'), meterFill: $('meter-fill'), meterTarget: $('meter-target'), flash: $('flash'),
       upload: $('upload-label'), uploadFill: $('upload-fill'), countdown: $('countdown'),
       coin: $('coin-button'), coinNote: $('coin-note'), progress: $('progress-button'),
@@ -33,7 +33,7 @@ export class Director {
     this.waiters = new Set();
     this.tasks = new Set();
     this.holding = { pointer: false, key: false };
-    this.swipe = 0;
+    this.taps = 0;
     this.points = 0;
     this.neinIndex = 0;
     this.breath = null;
@@ -228,7 +228,7 @@ export class Director {
       return promise;
     }
     const length = line.text.length + (line.sub?.length || 0);
-    const linger = line.cut ? 450 : 1500 + length * 38;
+    const linger = line.linger ?? (line.cut ? 450 : 1500 + length * 38);
     typing.advance = () => waiter.resolve();
     typing.onDone = () => {
       const stop = this.task(() => {
@@ -294,16 +294,20 @@ export class Director {
   }
 
   blow(round, mode) {
-    const meter = mode === 'mic' && this.mic.live ? this.breath ??= new BreathMeter() : new FingerWind();
+    const meter = mode === 'mic' && this.mic.live ? this.breath ??= new BreathMeter() : new TapWind();
     meter.setRound(round);
     const el = this.el;
+    const tapping = meter instanceof TapWind;
+    const final = round === this.copy.rounds.length - 1;
     this.cue('round');
     this.flag('blowing');
-    this.body.dataset.mode = meter instanceof FingerWind ? 'finger' : 'mic';
+    this.taps = 0;
+    this.body.dataset.mode = tapping ? 'finger' : 'mic';
     el.dialogue.hidden = false;
     el.dialogue.dataset.who = 'hint';
     el.speaker.textContent = this.copy.rounds[round].banner;
-    el.line.textContent = this.copy.hint[this.body.dataset.mode];
+    el.line.textContent = tapping ? this.copy.hint.tap[round] : this.copy.hint.mic;
+    el.holdLabel.textContent = tapping ? this.copy.hint.tapButton : this.copy.hint.button;
     el.sub.textContent = '';
     el.choices.replaceChildren(el.hold);
     this.typing = null;
@@ -320,17 +324,27 @@ export class Director {
         state = meter.push({ ...frame, dt, holding });
         if (this.debug) el.debug.textContent = `lvl ${frame.level.toFixed(0)} flat ${frame.flatness.toFixed(2)} floor ${meter.floor.toFixed(0)} thr ${meter.threshold.toFixed(0)} tgt ${meter.target.toFixed(0)} pow ${state.power.toFixed(2)} effort ${(state.effort / 1000).toFixed(1)}s`;
       } else {
-        state = meter.push({ dt, holding, swipe: this.swipe });
-        this.swipe = 0;
+        state = meter.push({ dt, taps: this.taps });
+        this.taps = 0;
       }
       this.body.style.setProperty('--power', state.power.toFixed(3));
       el.meterFill.style.height = `${Math.min(100, (state.power / 1.3) * 100)}%`;
-      if (holding) this.score(state.power * dt * 0.12);
+      if (holding || meter.sinceTap < 600) this.score(state.power * dt * 0.12);
+      // In the final round the stage starts to strain while Silvio is still blowing,
+      // so the collapse that follows is clearly his doing.
+      // On above 0.55, off below 0.4, so it doesn't flicker while the meter hovers.
+      const strainingNow = this.body.classList.contains('straining');
+      const straining = final && !state.done && state.power > (strainingNow ? 0.4 : 0.55);
+      if (straining !== strainingNow) {
+        this.flag('straining', straining);
+        if (straining && !this.mic.live) this.cue('creak');
+      }
       if (state.done) {
         stop();
         this.peak = Math.max(this.peak || 0, state.peak);
         this.flag('blowing', false);
         this.flag('holding', false);
+        this.flag('straining', false);
         this.holding.pointer = this.holding.key = false;
         el.choices.replaceChildren();
         el.dialogue.hidden = true;
@@ -431,6 +445,14 @@ export class Director {
 
   // ---------- Input ----------
 
+  tap() {
+    this.taps++;
+    const button = this.el.hold;
+    button.classList.remove('bump');
+    void button.offsetWidth;
+    button.classList.add('bump');
+  }
+
   bind() {
     const { dialogue, hold, cake, progress } = this.el;
     dialogue.addEventListener('click', event => {
@@ -440,7 +462,8 @@ export class Director {
     const press = event => {
       if (!this.body.classList.contains('blowing')) return;
       event.preventDefault();
-      this.holding.pointer = true;
+      if (this.body.dataset.mode === 'finger') this.tap();
+      else this.holding.pointer = true;
     };
     const release = () => { this.holding.pointer = false; };
     hold.addEventListener('pointerdown', press);
@@ -448,22 +471,14 @@ export class Director {
     window.addEventListener('pointerup', release);
     window.addEventListener('pointercancel', release);
     hold.addEventListener('contextmenu', event => event.preventDefault());
-    let lastPoint = null;
-    window.addEventListener('pointermove', event => {
-      if (!this.body.classList.contains('blowing') || this.body.dataset.mode !== 'finger') { lastPoint = null; return; }
-      if (event.pointerType === 'mouse' && !event.buttons) { lastPoint = null; return; }
-      const rect = cake.getBoundingClientRect();
-      const inside = event.clientX > rect.left - rect.width * 0.3 && event.clientX < rect.right + rect.width * 0.3 &&
-        event.clientY > rect.top - rect.height * 0.4 && event.clientY < rect.bottom;
-      if (inside && lastPoint) this.swipe += Math.hypot(event.clientX - lastPoint.x, event.clientY - lastPoint.y) / (rect.width * 3.5);
-      lastPoint = inside ? { x: event.clientX, y: event.clientY } : null;
-    });
     window.addEventListener('keydown', event => {
       if (event.target.closest?.('input, textarea')) return;
       const blowing = this.body.classList.contains('blowing');
       if (event.code === 'Space' && blowing) {
         event.preventDefault();
-        this.holding.key = true;
+        // Holding Space down auto-repeats; only real presses count as taps.
+        if (this.body.dataset.mode === 'finger') { if (!event.repeat) this.tap(); }
+        else this.holding.key = true;
       } else if ((event.code === 'Space' || event.code === 'Enter') && !event.target.closest?.('button')) {
         if (!this.el.dialogue.hidden) { event.preventDefault(); this.advance(); }
       }

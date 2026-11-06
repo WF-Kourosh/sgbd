@@ -176,6 +176,10 @@ button:disabled { cursor: default; }
 .wind-3 .chain.right { transform: rotate(-80deg) scaleY(.4); opacity: 0; transition: .3s; }
 .wind-3 .marquee { animation: swing 1.4s ease-in-out infinite alternate; }
 [data-scene='quake'] .set, [data-scene='quake'] .backdrop { animation: quake .16s linear infinite; }
+/* Final round: the stage strains while Silvio is still blowing. */
+.straining .set { animation: tremble .2s linear infinite; }
+.straining .marquee { animation: swing .45s ease-in-out infinite alternate; }
+.straining .bunting i { animation-duration: .22s; }
 [data-scene='quake'] .marquee { animation: swing .5s ease-in-out infinite alternate; }
 
 .wreck { left: 50%; bottom: 0; width: calc(var(--jw) * 1.6); height: calc(var(--jw) * .95); translate: -50% 0; pointer-events: none; }
@@ -249,6 +253,8 @@ button:disabled { cursor: default; }
 .choice:active { border-style: inset; box-shadow: 1px 1px #000; transform: translate(2px, 2px); }
 .hold { flex: 1 1 100%; min-height: 64px; background: var(--pink); color: #fff; border: 6px outset #ff9be2; box-shadow: 5px 5px #000; font: 400 clamp(20px, 4vw, 28px) var(--display); letter-spacing: .08em; text-transform: uppercase; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; animation: hold-pulse 1s ease-in-out infinite; }
 .holding .hold { border-style: inset; box-shadow: 1px 1px #000; transform: translate(3px, 3px); animation: none; background: #d4009c; }
+[data-mode='finger'] .hold { animation: none; }
+[data-mode='finger'] .hold.bump { animation: tap-bump .14s ease-out; }
 
 /* ---------- Wish upload ---------- */
 
@@ -428,13 +434,15 @@ button:disabled { cursor: default; }
 @keyframes wave { to { rotate: -40deg; } }
 @keyframes ufo-fly { 0% { opacity: 0; translate: -150% 20%; } 6% { opacity: 1; } 30%, 66% { translate: calc(var(--ux, 50cqw) - 50%) 0; } 94% { opacity: 1; } 100% { opacity: 0; translate: calc(100cqw + 60%) -60%; } }
 @keyframes ufo-beam { 0%, 30% { transform: scaleY(0); opacity: 0; } 36%, 54% { transform: scaleY(1); opacity: .9; } 60%, 100% { transform: scaleY(0); opacity: 0; } }
+@keyframes tap-bump { 50% { transform: translate(3px, 3px) scale(.96); background: #d4009c; } }
+@keyframes tremble { 25% { translate: -1.5px 1px; } 75% { translate: 1.5px -1px; } }
 @keyframes ticker { to { transform: translateX(-100%); } }
 
 /* ---------- Reduced motion: no shaking or flying, the collapse becomes a fade ---------- */
 
 @media (prefers-reduced-motion: reduce) {
   .sky, .beam, .bulbs, .bunting i, .jesus svg, .jesus .halo, .flicker, .marquee, .ticker span, .hold, .press, .coin, .next, .beacon { animation: none !important; }
-  [data-scene='quake'] .set, [data-scene='quake'] .backdrop, [data-scene='collapse'] .set, [data-mood='panic'] .jesus svg { animation: none !important; }
+  [data-scene='quake'] .set, [data-scene='quake'] .backdrop, [data-scene='collapse'] .set, .straining .set, .straining .marquee, [data-mood='panic'] .jesus svg { animation: none !important; }
   [data-scene='collapse'] .piece { animation: fade 1s var(--delay, 0s) forwards; transform: rotate(var(--r, 0deg)); }
   [data-scene='collapse'] .curtain, [data-scene='collapse'] .marquee, [data-scene='collapse'] .bunting { animation: fade-out 1s forwards; }
   .buried .marquee, .buried .curtain { opacity: 0; }

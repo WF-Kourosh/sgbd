@@ -20,7 +20,8 @@ Open `http://localhost:8765/`. The microphone only works on `localhost` or HTTPS
 - At the end the foreman switches the lights off. **Fiat lux** calls a small flying saucer (Fiat Lux is
   also a UFO religion): it beams the halo back on, the light spreads, and the work order appears.
   Watch Jesus. **Replay** starts again.
-- No microphone, or you'd rather not: hold the button (or Space) and swipe across the flames.
+- No microphone, or you'd rather not: tap the button (or the cake, or Space) to blow. Each round needs more
+  taps, faster: about 10, then 19, then 30 taps.
 - `?debug=mic` shows the live mic numbers (level, flatness, noise floor, threshold, target) for tuning.
 - `?speed=3` plays the story three times faster.
 
@@ -51,15 +52,22 @@ No build step and no backend. Everything is local: inline SVG characters, CSS sc
 Browser voice processing (echo cancellation, noise suppression, auto gain) is turned off, because it
 removes exactly the rumble of a blow.
 
+Without a microphone, every tap is a gust and the wind dies down between taps. Below a round's pace
+(1, 1.8, then 2.5 taps per second) the meter only drains, so each round needs more taps, faster.
+
+In the last round the stage starts to strain while Silvio is still blowing. The moment the candles go
+out it starts coming down, and Jesus notices the gust is still going after Silvio stopped.
+
 ## Checks
 
 ```sh
 node --test tests/
 ```
 
-Tests cover the blow math (calibration, sustain gate, voice penalty, adaptive floor, failsafe, finger
-mode), the story order (wish before candles, two relights, mic released before the collapse, death
-before the foreman, countdown stalling at 3) and sound opt-in.
+Tests cover the blow math (calibration, sustain gate, voice penalty, adaptive floor, failsafe, tap
+mode pace), the story order (wish before candles, two relights, mic released before the collapse,
+no pause between the last blow and the quake, death before the foreman, countdown stalling at 3,
+lights out before the ending) and sound opt-in.
 
 Paused tabs pause the story. With reduced motion, nothing shakes or flies and the collapse is a fade.
 Without JavaScript, a static "Miracle under construction" page is shown.

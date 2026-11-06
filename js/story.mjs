@@ -55,10 +55,12 @@ export async function blowRounds(d, c, mode) {
     d.flag(`wind-${round + 1}`);
     if (round === 1) d.cue('screw');
     if (last) {
+      // No pause here: the stage starts coming down while the candles are still smoking.
       d.candles('gone');
       d.stopMic();
       d.banner(c.victory);
       d.cue('victory');
+      return;
     } else {
       d.candles('out');
       d.announce(c.announcements.candlesOut);
@@ -77,7 +79,10 @@ export async function collapse(d, c) {
   d.scene('quake');
   d.cue('creak');
   d.cue('shake');
-  for (const line of c.quake) await d.say(line);
+  for (const line of c.quake) {
+    if (line.cue) d.cue(line.cue);
+    await d.say(line);
+  }
   d.scene('collapse');
   d.quiet();
   d.announce(c.announcements.collapse);

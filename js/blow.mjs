@@ -91,33 +91,42 @@ export class BreathMeter {
   }
 }
 
-// Fallback when there's no microphone: holding the button or Space blows steadily,
-// swiping across the flames adds gusts. Later rounds need a little longer.
-export class FingerWind {
-  constructor({ b = BLOW, fillMs = 1500 } = {}) {
+// Fallback when there's no microphone: tap to blow. Every tap is a gust, and the wind dies
+// down between taps. Each round needs more taps at a faster pace: below `pace` taps
+// per second the meter only drains.
+export const TAP_ROUNDS = [
+  { taps: 8, pace: 1 },
+  { taps: 12, pace: 1.8 },
+  { taps: 16, pace: 2.5 },
+];
+
+export class TapWind {
+  constructor({ b = BLOW, rounds = TAP_ROUNDS } = {}) {
     this.b = b;
-    this.fillMs = fillMs;
+    this.rounds = rounds;
     this.setRound(0);
   }
 
   setRound(round) {
     this.round = round;
+    this.cfg = this.rounds[Math.min(round, this.rounds.length - 1)];
     this.power = 0;
     this.peak = 0;
-    this.sustain = 0;
     this.effort = 0;
+    this.sinceTap = Infinity;
     this.done = null;
   }
 
-  push({ dt, holding = false, swipe = 0 }) {
+  push({ dt, taps = 0 }) {
     if (this.done) return this.state();
-    const scale = this.b.roundScale[Math.min(this.round, this.b.roundScale.length - 1)];
-    const gain = holding ? dt / (this.fillMs * scale) : -dt / 900;
-    this.power = Math.min(1.3, Math.max(0, this.power + gain + swipe / scale));
+    const gust = 1 / this.cfg.taps;
+    const leak = this.cfg.pace * gust * dt / 1000;
+    this.power = Math.min(1.3, Math.max(0, this.power + taps * gust - leak));
     this.peak = Math.max(this.peak, this.power);
-    this.sustain = this.power >= 1 ? this.sustain + dt : 0;
-    if (holding || swipe > 0) this.effort += dt;
-    if (this.sustain >= this.b.sustainMs) this.done = 'breath';
+    this.sinceTap = taps ? 0 : this.sinceTap + dt;
+    // Only time spent actually tapping counts towards the failsafe.
+    if (this.sinceTap < 600) this.effort += dt;
+    if (this.power >= 1) this.done = 'taps';
     else if (this.effort >= this.b.failsafeMs) this.done = 'failsafe';
     return this.state();
   }
