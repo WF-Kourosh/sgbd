@@ -122,3 +122,21 @@ test('spectral flatness tells noise from a harmonic stack', () => {
   assert.ok(flatness(noise) > 0.95);
   assert.ok(flatness(voice) < BLOW.tonalFlatness);
 });
+
+test('breath without the button is noticed but blows nothing out', () => {
+  const meter = new BreathMeter({ floor: 15 });
+  const breath = { level: meter.target + 5, flatness: 0.4, dt: 16, holding: false };
+  let state = frames(meter, 25, breath);
+  assert.ok(state.unheld >= BLOW.nudgeMs);
+  assert.equal(state.done, null);
+  assert.equal(state.power, 0);
+  assert.equal(meter.floor, 15);
+  state = meter.push({ ...breath, holding: true });
+  assert.equal(state.unheld, 0);
+});
+
+test('a voice without the button is not mistaken for breath', () => {
+  const meter = new BreathMeter({ floor: 15 });
+  const state = frames(meter, 40, { level: 200, flatness: 0.02, dt: 16, holding: false });
+  assert.equal(state.unheld, 0);
+});

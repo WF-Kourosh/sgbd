@@ -18,6 +18,7 @@ export const BLOW = {
   effortFloor: 0.35,
   tonalFlatness: 0.08,
   floorAdapt: 0.02,
+  nudgeMs: 300,
 };
 
 export function median(values) {
@@ -60,6 +61,7 @@ export class BreathMeter {
     this.effort = 0;
     this.power = 0;
     this.peak = 0;
+    this.unheld = 0;
     this.done = null;
   }
 
@@ -67,13 +69,18 @@ export class BreathMeter {
     if (this.done) return this.state();
     const b = this.b;
     if (!holding) {
+      // Breath without the button still gets counted, so the page can tell Silvio to hold it.
+      const breath = level >= this.threshold && flatness >= b.tonalFlatness;
+      this.unheld = breath ? this.unheld + dt : 0;
       // Keep learning the room while nobody is blowing, so a TV switching on doesn't break it.
-      // Capping the sample stops one shout between rounds from making the next round impossible.
-      this.floor += (Math.min(level, this.threshold) - this.floor) * b.floorAdapt;
+      // Capping the sample stops one shout between rounds from making the next round impossible,
+      // and skipping breath stops a blow without the button from making the next one harder.
+      if (!breath) this.floor += (Math.min(level, this.threshold) - this.floor) * b.floorAdapt;
       this.sustain = 0;
       this.power = Math.max(0, this.power - dt / 400);
       return this.state();
     }
+    this.unheld = 0;
     const tonal = flatness < b.tonalFlatness;
     const effective = tonal ? this.floor + (level - this.floor) * 0.5 : level;
     const span = Math.max(1, this.target - this.floor);
@@ -87,7 +94,7 @@ export class BreathMeter {
   }
 
   state() {
-    return { power: this.power, peak: this.peak, done: this.done, effort: this.effort };
+    return { power: this.power, peak: this.peak, done: this.done, effort: this.effort, unheld: this.unheld };
   }
 }
 

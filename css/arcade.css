@@ -255,6 +255,7 @@ button:disabled { cursor: default; }
 .holding .hold { border-style: inset; box-shadow: 1px 1px #000; transform: translate(3px, 3px); animation: none; background: #d4009c; }
 [data-mode='finger'] .hold { animation: none; }
 [data-mode='finger'] .hold.bump { animation: tap-bump .14s ease-out; }
+.nudge .hold { background: var(--yellow); color: #210047; border-color: #fff5ad; animation: nudge .3s ease-in-out infinite alternate; }
 
 /* ---------- Wish upload ---------- */
 
@@ -424,6 +425,7 @@ button:disabled { cursor: default; }
 @keyframes beacon { 50% { background: #ffe14a; box-shadow: 0 0 40px 18px #ff8a0088; } }
 @keyframes blink-hint { 50% { opacity: .2; } }
 @keyframes hold-pulse { 50% { transform: scale(1.02); } }
+@keyframes nudge { to { transform: scale(1.06) rotate(-1deg); } }
 @keyframes flash-in { 0% { opacity: 0; } 50% { opacity: 1; } 75% { opacity: 0; } 100% { opacity: 1; } }
 @keyframes pop { from { transform: scale(1.5); opacity: .3; } }
 @keyframes crawl { 0% { width: 0; } 60% { width: 31%; } 70% { width: 33%; } 100% { width: 33%; } }

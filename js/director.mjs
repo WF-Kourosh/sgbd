@@ -6,7 +6,7 @@ import { story } from './story.mjs';
 export class Cancelled extends Error {}
 
 const $ = id => document.getElementById(id);
-const FLAGS = ['eyes-closed', 'wind-1', 'wind-2', 'wind-3', 'buried', 'dead', 'installing', 'stalled', 'coined', 'lights-out', 'lux', 'ufo-pass', 'winking', 'talking', 'blowing', 'holding', 'straining', 'typing', 'finished'];
+const FLAGS = ['eyes-closed', 'wind-1', 'wind-2', 'wind-3', 'buried', 'dead', 'installing', 'stalled', 'coined', 'lights-out', 'lux', 'ufo-pass', 'winking', 'talking', 'blowing', 'holding', 'straining', 'nudge', 'typing', 'finished'];
 
 export class Director {
   constructor({ sound, mic, copy, debug = false, speed = 1 }) {
@@ -19,7 +19,7 @@ export class Director {
     this.el = {
       score: $('hud-score'), lives: $('hud-lives'), dialogue: $('dialogue'), speaker: $('speaker'),
       line: $('line'), sub: $('subline'), choices: $('choices'), hold: $('hold-button'), holdLabel: $('hold-label'),
-      meter: $('meter'), meterFill: $('meter-fill'), meterTarget: $('meter-target'), flash: $('flash'),
+      meter: $('meter'), meterLabel: $('meter-label'), meterFill: $('meter-fill'), meterTarget: $('meter-target'), flash: $('flash'),
       upload: $('upload-label'), uploadFill: $('upload-fill'), countdown: $('countdown'),
       coin: $('coin-button'), coinNote: $('coin-note'), progress: $('progress-button'),
       progressValue: $('progress-value'), nein: $('nein'), highScore: $('high-score'), sr: $('sr'),
@@ -137,7 +137,7 @@ export class Director {
   }
   wait(ms) { return this.pending(this.time + ms).promise; }
   announce(text) { this.el.sr.textContent = text; }
-  quiet() { this.el.dialogue.hidden = true; this.typing = null; this.body.dataset.mood = ''; }
+  quiet() { this.el.dialogue.hidden = true; this.stopTyping(); this.body.dataset.mood = ''; }
 
   banner(text) {
     const flash = this.el.flash;
@@ -189,6 +189,14 @@ export class Director {
     };
     this.tasks.add(this.typeTask);
     return typing;
+  }
+
+  // A line still typing would otherwise keep writing over whatever the box shows next.
+  stopTyping() {
+    this.tasks.delete(this.typeTask);
+    this.typing = null;
+    this.flag('talking', false);
+    this.flag('typing', false);
   }
 
   renderTyped(line, count) {
@@ -306,11 +314,13 @@ export class Director {
     el.dialogue.hidden = false;
     el.dialogue.dataset.who = 'hint';
     el.speaker.textContent = this.copy.rounds[round].banner;
+    // The banner's battle cry: FLA!, FORTIUS!, FORTISSIME!!
+    el.meterLabel.textContent = this.copy.rounds[round].banner.split('·').pop().trim();
     el.line.textContent = tapping ? this.copy.hint.tap[round] : this.copy.hint.mic;
     el.holdLabel.textContent = tapping ? this.copy.hint.tapButton : this.copy.hint.button;
     el.sub.textContent = '';
     el.choices.replaceChildren(el.hold);
-    this.typing = null;
+    this.stopTyping();
     el.hold.focus({ preventScroll: true });
     // Power tops out at 1.3, so the round's target (power 1) sits three quarters up the meter.
     el.meterTarget.style.bottom = `${100 / 1.3}%`;
@@ -322,6 +332,13 @@ export class Director {
       if (meter instanceof BreathMeter) {
         const frame = this.mic.read();
         state = meter.push({ ...frame, dt, holding });
+        // Blowing without holding does nothing, so say so until he holds the button.
+        const nudging = this.body.classList.contains('nudge');
+        const nudge = !holding && (nudging || state.unheld >= BLOW.nudgeMs);
+        if (nudge !== nudging) {
+          this.flag('nudge', nudge);
+          el.line.textContent = nudge ? this.copy.hint.nudge : this.copy.hint.mic;
+        }
         if (this.debug) el.debug.textContent = `lvl ${frame.level.toFixed(0)} flat ${frame.flatness.toFixed(2)} floor ${meter.floor.toFixed(0)} thr ${meter.threshold.toFixed(0)} tgt ${meter.target.toFixed(0)} pow ${state.power.toFixed(2)} effort ${(state.effort / 1000).toFixed(1)}s`;
       } else {
         state = meter.push({ dt, taps: this.taps });
@@ -345,6 +362,7 @@ export class Director {
         this.flag('blowing', false);
         this.flag('holding', false);
         this.flag('straining', false);
+        this.flag('nudge', false);
         this.holding.pointer = this.holding.key = false;
         el.choices.replaceChildren();
         el.dialogue.hidden = true;
@@ -436,7 +454,7 @@ export class Director {
       this.cue('fiat');
       this.announce(this.copy.lux.announce);
     });
-    this.after(6200, () => {
+    this.after(4600, () => {
       this.flag('winking');
       this.after(900, () => this.flag('winking', false));
     });
