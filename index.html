@@ -2,70 +2,299 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#140f15">
-  <meta name="description" content="Silvio & Jesus. Two birthdays. One slightly ambitious miracle.">
-  <title>Silvio XXXIII · The Birthday Miracle</title>
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./app.js" type="module"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#12005a">
+  <meta name="description" content="Jesus and Silvio, 33 each. Make a wish, blow out the candles. What could go wrong?">
+  <title>Jesus &amp; Silvio · XXXIII</title>
+  <link rel="stylesheet" href="./css/arcade.css">
+  <script src="./js/main.js" type="module"></script>
 </head>
-<body data-phase="arrival">
-  <header class="topbar">
-    <a class="wordmark" href="./" aria-label="Silvio XXXIII, replay from the beginning"><span>✦</span> SILVIO <i>XXXIII</i></a>
-    <div class="edition">A LITTLE HEAVENLY THEATRE</div>
-    <nav aria-label="Playback controls"><button id="sound-button" aria-pressed="false" type="button"><span aria-hidden="true">♪</span> Sound off</button><button id="pause-button" aria-label="Pause performance" aria-pressed="false" type="button">Ⅱ</button><button id="skip-button" type="button">Skip intro <span aria-hidden="true">↗</span></button></nav>
-  </header>
+<body data-scene="boot" data-candles="lit">
+  <div class="app">
+    <header class="hud">
+      <div class="hud-player"><span class="k">1UP</span> <b>SILVIO</b> <span class="score" id="hud-score">000000</span></div>
+      <div class="hud-brand" aria-hidden="true">✦ JESUS &amp; SILVIO ✦ <small>XXXIII</small></div>
+      <div class="hud-lives"><span class="k">J.</span> <span class="hearts" id="hud-lives" aria-label="Lives: 3">♥♥♥</span></div>
+      <div class="hud-controls">
+        <button class="win-button" id="sound-button" type="button" aria-pressed="false"><span aria-hidden="true">♪</span> <span class="label">Sound off</span></button>
+        <button class="win-button" id="skip-button" type="button">Skip <span aria-hidden="true">↗</span></button>
+      </div>
+    </header>
 
-  <main class="theatre" aria-label="The birthday miracle, a puppet theatre for Silvio">
-    <section class="welcome" id="welcome" aria-labelledby="welcome-title" aria-describedby="welcome-description">
-      <span class="welcome-star" aria-hidden="true">✦</span>
-      <p class="welcome-kicker">SILVIO XXXIII · A LITTLE HEAVENLY THEATRE</p>
-      <h1 id="welcome-title">Before the<br><em>curtain rises.</em></h1>
-      <p id="welcome-description">A small birthday spectacle.<br>Choose your kind of miracle.</p>
-      <div class="welcome-actions"><button id="watch-with-sound" type="button"><span>A miracle with fanfare</span><small><span aria-hidden="true">♪</span> Sound on</small></button><button id="watch-quietly" type="button"><span>A quiet miracle</span><small>Sound off</small></button></div>
-      <small>You can change this anytime.</small>
-    </section>
-    <div class="scene" aria-hidden="true">
-      <div class="backdrop"></div><div class="starlight"></div>
-      <div class="beam beam-left"></div><div class="beam beam-right"></div>
-      <div class="stage-floor"></div>
-      <div class="grand-number">33</div>
-      <div class="birthday-banner"><small>FOR ONE NIGHT ONLY</small><strong>Jesus <i>&</i> Silvio</strong><span>TWO BIRTHDAYS. ONE DIVINE AGE.</span></div>
-      <div class="hanging-column column-left"></div><div class="hanging-column column-right"></div>
-      <div class="reveal-cabinet"><div class="cabinet-label">THE GRAND SURPRISE</div><div class="cabinet-drape"><span>✦</span><em>Something<br>miraculous.</em><small>PREPARED ESPECIALLY FOR SILVIO</small></div></div>
-      <div class="pull-cord"><span></span></div>
-      <div class="loose-screw"></div><div class="small-fragment">✦</div>
+    <main class="stage" aria-label="A birthday for Silvio">
+      <div class="backdrop" aria-hidden="true">
+        <div class="sky"></div>
+        <div class="beam left"></div><div class="beam right"></div>
+        <div class="floor"></div>
+        <div class="curtain left"></div><div class="curtain right"></div>
+        <div class="valance"><span class="bulbs"></span></div>
+      </div>
 
-      <div class="actor jesus" id="jesus"><div class="actor-shadow"></div><div class="rig"><div class="halo"></div><div class="puppet-parts"></div><div class="strings"><i></i><i></i></div></div></div>
-      <div class="falling-lintel"><span>✦ &nbsp; XXXIII &nbsp; ✦</span></div>
-      <div class="falling-curtain"></div><div class="dust"></div>
-      <div class="wreckage"></div><div class="last-hand"></div>
+      <div class="set" id="set">
+        <div class="big33" aria-hidden="true">33</div>
+        <div class="bunting" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="marquee" aria-hidden="true">
+          <span class="chain left"></span><span class="chain right"></span>
+          <b>★ SILVIO SUPER SHOW ★</b>
+          <small>JESUS &amp; SILVIO · 33 EACH</small>
+        </div>
 
-      <div class="actor foreman" id="foreman"><div class="actor-shadow"></div><div class="rig"><div class="puppet-parts"></div><div class="strings"><i></i><i></i></div><div class="toolbox"><span></span></div><div class="hammer"></div></div></div>
-      <div class="worksite"><div class="post post-left"></div><div class="post post-right"></div><div class="tape"><span>WUNDER IN ARBEIT &nbsp; • &nbsp; WUNDER IN ARBEIT &nbsp; • &nbsp;</span></div></div>
-      <div class="front-curtain curtain-left"></div><div class="front-curtain curtain-right"></div>
-      <div class="proscenium"><span>IL TEATRO DEI MIRACOLI</span><i></i></div>
-    </div>
+        <div class="jesus" aria-hidden="true"><svg viewBox="0 0 500 610" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="halo-dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2" fill="#faed9c" opacity=".55"/></pattern>
+          </defs>
+          <g class="halo">
+            <circle cx="250" cy="208" r="168" fill="#ffea00" stroke="#a939e8" stroke-width="9"/>
+            <circle cx="250" cy="208" r="151" fill="#ffab00" stroke="#fff7a8" stroke-width="6"/>
+            <circle cx="250" cy="208" r="142" fill="#ffe95b"/>
+            <circle cx="250" cy="208" r="142" fill="url(#halo-dots)"/>
+            <path d="M250 18l8 30-8 30-8-30z M63 208l30-8 30 8-30 8z M437 208l-30-8-30 8 30 8z M113 71l24 15 15 24-24-15z M387 71l-24 15-15 24 24-15z" fill="#fff" stroke="#ff56d7" stroke-width="3"/>
+          </g>
+          <path d="M86 610c2-110 36-171 113-197h102c77 26 111 87 113 197z" fill="#faf5dc" stroke="#371b68" stroke-width="8"/>
+          <path d="M86 610c4-96 27-151 95-183l44 52-22 131z M414 610c-4-96-27-151-95-183l-44 52 22 131z" fill="#08bbd6" stroke="#371b68" stroke-width="8"/>
+          <path d="M180 427q70 89 140 0" fill="none" stroke="#ffda11" stroke-width="10"/>
+          <path d="M201 382v48c5 27 93 27 98 0v-48" fill="#eeb083" stroke="#6e312c" stroke-width="6"/>
+          <g class="head">
+            <path d="M147 191q0-123 103-123t103 123q-2 88 27 149-13 22-38 17-18 20-48 2h-88q-30 18-48-2-25 5-38-17 29-61 27-149z" fill="#663528" stroke="#371b38" stroke-width="8" stroke-linejoin="round"/>
+            <path d="M157 225q3 87-19 111 M343 225q-3 87 19 111" fill="none" stroke="#bd7147" stroke-width="7" stroke-linecap="round"/>
+            <ellipse cx="168" cy="251" rx="20" ry="27" fill="#f0ab7c" stroke="#833e32" stroke-width="5"/><ellipse cx="332" cy="251" rx="20" ry="27" fill="#f0ab7c" stroke="#833e32" stroke-width="5"/>
+            <path d="M171 173q0-74 79-74t79 74v89q0 91-79 110-79-19-79-110z" fill="#ffc496" stroke="#833e32" stroke-width="6"/>
+            <path d="M170 193q-13-111 80-111t80 111q-24-10-33-48-25 19-47-8-22 27-47 8-9 38-33 48z" fill="#6a3327" stroke="#371b38" stroke-width="7" stroke-linejoin="round"/>
+            <path class="brow brow-left" d="M185 224q20-16 42-2" fill="none" stroke="#633428" stroke-width="8" stroke-linecap="round"/>
+            <path class="brow brow-right" d="M273 222q22-14 42 2" fill="none" stroke="#633428" stroke-width="8" stroke-linecap="round"/>
+            <g class="eye eye-left"><ellipse cx="207" cy="245" rx="21" ry="14" fill="#fff" stroke="#512d2c" stroke-width="4"/><circle class="pupil" cx="210" cy="246" r="8" fill="#35201d"/><circle cx="213" cy="242" r="3" fill="#fff"/></g>
+            <g class="eye eye-right"><ellipse cx="293" cy="245" rx="21" ry="14" fill="#fff" stroke="#512d2c" stroke-width="4"/><circle class="pupil" cx="296" cy="246" r="8" fill="#35201d"/><circle cx="299" cy="242" r="3" fill="#fff"/></g>
+            <path class="shut shut-left" d="M187 246q20 13 40 0" fill="none" stroke="#512d2c" stroke-width="6" stroke-linecap="round"/>
+            <path class="shut shut-right" d="M273 246q20 13 40 0" fill="none" stroke="#512d2c" stroke-width="6" stroke-linecap="round"/>
+            <path class="x x-left" d="M195 234l24 22M219 234l-24 22" stroke="#35201d" stroke-width="7" stroke-linecap="round"/>
+            <path class="x x-right" d="M281 234l24 22M305 234l-24 22" stroke="#35201d" stroke-width="7" stroke-linecap="round"/>
+            <circle cx="187" cy="274" r="9" fill="#ed8290" opacity=".55"/><circle cx="313" cy="274" r="9" fill="#ed8290" opacity=".55"/>
+            <path d="M246 251l-6 26q10 7 21 0" fill="none" stroke="#c57d59" stroke-width="5" stroke-linecap="round"/>
+            <path class="sweat" d="M332 196q10 16 0 22-10-6 0-22z" fill="#9fe8ff" stroke="#2a6f9e" stroke-width="3"/>
+            <path d="M176 284q12 65 74 91 62-26 74-91-18 2-26 18-24-10-48 5-24-15-48-5-8-16-26-18z" fill="#6a3327" stroke="#51272b" stroke-width="5"/>
+            <path d="M210 302q21-10 40 5 19-15 40-5-12 15-40 9-28 6-40-9z" fill="#452525"/>
+            <path class="mouth mouth-smile" d="M224 320q26 21 52 0" fill="none" stroke="#ffcfb1" stroke-width="5" stroke-linecap="round"/>
+            <ellipse class="mouth mouth-open" cx="250" cy="324" rx="17" ry="10" fill="#3a1218" stroke="#ffcfb1" stroke-width="4"/>
+            <ellipse class="mouth mouth-o" cx="250" cy="328" rx="13" ry="17" fill="#3a1218" stroke="#ffcfb1" stroke-width="4"/>
+            <path class="mouth mouth-flat" d="M230 326q20-6 40 0" fill="none" stroke="#ffcfb1" stroke-width="5" stroke-linecap="round"/>
+            <path d="M204 339q20 22 46 27 26-5 46-27" fill="none" stroke="#c67748" stroke-width="4"/>
+          </g>
+        </svg></div>
 
-    <div class="act-label" aria-hidden="true"><span id="act-number">ACT I</span><span class="act-rule"></span><span id="act-name">A DIVINE OCCASION</span></div>
-    <div class="dialogue" id="dialogue"><span class="speaker" id="speaker"></span><p id="line"></p><small id="aside"></small></div>
+        <div class="table" aria-hidden="true"></div>
 
-    <section class="final-sign" id="final-sign" aria-labelledby="final-title">
-      <div class="work-light" aria-hidden="true"></div>
-      <div class="sign-bolts" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-      <span class="sign-kicker">A SLIGHT CHANGE OF PLANS</span>
-      <h1 id="final-title">Miracle under<br><em>construction.</em></h1>
-      <p class="final-birthday" lang="it">Buon compleanno, Silvio.</p>
-      <p class="final-copy">The real surprise is still being built.<br><span lang="it">Il meglio deve ancora venire. Torna presto.</span></p>
-      <div class="final-actions"><button id="lamp-button" aria-pressed="false" type="button"><span aria-hidden="true">✧</span> Fiat lux</button><button id="replay-button" type="button"><span aria-hidden="true">↺</span> Replay</button></div>
-      <p class="lamp-plaque" hidden>Now you can see that it’s still unfinished.</p>
-      <span class="sign-footer" lang="de">BAUSTELLE. NATÜRLICH.</span>
-    </section>
-    <p class="sr-only" id="announcement" aria-live="polite" aria-atomic="true"></p>
-    <div class="loading-note" role="status">Preparing a small miracle…</div>
-    <div class="film-progress" aria-hidden="true"><i></i></div>
-  </main>
-  <footer class="footer"><span>EST. XXXIII <b>✦</b> CON AMORE</span><span>A MIRACLE IN 33 SECONDS</span></footer>
-  <noscript><style>.theatre,.topbar,.footer{display:none}.static-ending{min-height:100vh;display:grid;place-content:center;text-align:center;padding:2rem;color:#f4dfb7;background:#191321;font-family:Georgia,serif}.static-ending h1{font-size:clamp(2.5rem,7vw,5rem)}.static-ending p{line-height:1.8}</style><main class="static-ending"><p>✦ JESUS &amp; SILVIO · XXXIII ✦</p><h1>Miracle under construction.</h1><p>Buon compleanno, Silvio.<br>The real surprise is still being built.<br>Il meglio deve ancora venire. Torna presto.</p></main></noscript>
+        <div class="cake" id="cake" aria-label="A birthday cake with two candles shaped like 3s" role="img"><svg viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="flame-glow"><stop stop-color="#fff6a0" stop-opacity=".9"/><stop offset=".45" stop-color="#ffb000" stop-opacity=".35"/><stop offset="1" stop-color="#ff4fc8" stop-opacity="0"/></radialGradient>
+          </defs>
+          <g class="glow"><circle cx="112" cy="24" r="70" fill="url(#flame-glow)"/><circle cx="208" cy="24" r="70" fill="url(#flame-glow)"/></g>
+          <ellipse cx="160" cy="276" rx="152" ry="17" fill="#ece6ff" stroke="#371b68" stroke-width="5"/>
+          <rect x="38" y="186" width="244" height="84" rx="10" fill="#ff4fc8" stroke="#371b68" stroke-width="6"/>
+          <path d="M41 190h238v10q-10 15-20 0-10 15-20 0-10 15-20 0-10 15-20 0-10 15-20 0-10 15-20 0-10 15-20 0-10 15-20 0-10 15-20 0-10 15-20 0-10 15-20 0-10 15-18 0z" fill="#19e3ff" stroke="#371b68" stroke-width="3"/>
+          <text x="160" y="252" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="36" fill="#fff" stroke="#371b68" stroke-width="6" paint-order="stroke" letter-spacing="3">XXXIII</text>
+          <rect x="84" y="128" width="152" height="62" rx="8" fill="#ffe14a" stroke="#371b68" stroke-width="6"/>
+          <path d="M87 132h146v9q-9 14-18 0-9 14-18 0-9 14-18 0-9 14-18 0-9 14-18 0-9 14-18 0-9 14-18 0-9 14-20 0z" fill="#fff" stroke="#371b68" stroke-width="3"/>
+          <g fill="#371b68"><rect x="100" y="160" width="9" height="4" rx="2" transform="rotate(30 104 162)"/><rect x="140" y="170" width="9" height="4" rx="2" transform="rotate(-20 144 172)"/><rect x="180" y="158" width="9" height="4" rx="2" transform="rotate(60 184 160)"/><rect x="214" y="172" width="9" height="4" rx="2"/></g>
+          <g fill="#fff"><rect x="62" y="222" width="10" height="4" rx="2" transform="rotate(-30 66 224)"/><rect x="250" y="230" width="10" height="4" rx="2" transform="rotate(25 255 232)"/><rect x="236" y="206" width="10" height="4" rx="2"/><rect x="74" y="250" width="10" height="4" rx="2" transform="rotate(50 78 252)"/></g>
+          <g class="candle">
+            <text x="-112" y="131" transform="scale(-1 1)" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="88" fill="#19e3ff" stroke="#371b68" stroke-width="9" paint-order="stroke">3</text>
+            <text x="208" y="131" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="88" fill="#19e3ff" stroke="#371b68" stroke-width="9" paint-order="stroke">3</text>
+            <path d="M112 66v-12M208 66v-12" stroke="#371b68" stroke-width="4" stroke-linecap="round"/>
+          </g>
+          <g transform="translate(112 56)"><g class="flame"><g class="flicker"><path d="M0 0C-22-7-22-38 0-70 22-38 22-7 0 0z" fill="#ff8a00" stroke="#371b68" stroke-width="4"/><path d="M0-4C-12-8-12-26 0-44 12-26 12-8 0-4z" fill="#fff27a"/></g></g><path class="smoke" d="M0-4c-7-10 7-16 0-26s7-16 0-26" fill="none" stroke="#e5ddff" stroke-width="5" stroke-linecap="round"/></g>
+          <g transform="translate(208 56)"><g class="flame"><g class="flicker"><path d="M0 0C-22-7-22-38 0-70 22-38 22-7 0 0z" fill="#ff8a00" stroke="#371b68" stroke-width="4"/><path d="M0-4C-12-8-12-26 0-44 12-26 12-8 0-4z" fill="#fff27a"/></g></g><path class="smoke" d="M0-4c-7-10 7-16 0-26s7-16 0-26" fill="none" stroke="#e5ddff" stroke-width="5" stroke-linecap="round"/></g>
+        </svg></div>
+
+        <div class="gift" aria-hidden="true">
+          <span class="gift-tag">PER SILVIO</span>
+          <svg viewBox="0 0 140 150" xmlns="http://www.w3.org/2000/svg">
+            <rect x="14" y="64" width="112" height="80" rx="4" fill="#19e3ff" stroke="#371b68" stroke-width="6"/>
+            <rect x="60" y="64" width="20" height="80" fill="#ffe14a" stroke="#371b68" stroke-width="4"/>
+            <text x="37" y="122" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="40" fill="#fff" stroke="#371b68" stroke-width="5" paint-order="stroke">?</text>
+            <text x="103" y="122" text-anchor="middle" font-family="Impact, 'Arial Black', sans-serif" font-size="40" fill="#fff" stroke="#371b68" stroke-width="5" paint-order="stroke">?</text>
+            <g class="gift-dust" fill="#e5ddff"><circle cx="52" cy="58" r="5"/><circle cx="72" cy="52" r="7"/><circle cx="92" cy="58" r="4"/></g>
+            <g class="gift-lid">
+              <path d="M70 46C46 14 26 30 40 46zM70 46C94 14 114 30 100 46z" fill="#ff4fc8" stroke="#371b68" stroke-width="5"/>
+              <rect x="6" y="44" width="128" height="24" rx="4" fill="#19e3ff" stroke="#371b68" stroke-width="6"/>
+              <rect x="58" y="44" width="24" height="24" fill="#ffe14a" stroke="#371b68" stroke-width="4"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="wreck" aria-hidden="true">
+          <i class="piece truss"></i>
+          <i class="piece curtain-heap"></i>
+          <i class="piece chunk c1"></i><i class="piece chunk c2"></i><i class="piece chunk c3"></i>
+          <i class="piece plank">XXXIII</i>
+          <i class="piece chunk c4"></i>
+        </div>
+        <div class="dust" aria-hidden="true"></div>
+
+        <div class="worker" aria-hidden="true"><svg viewBox="0 0 440 700" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="worker-skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4c9a0"/><stop offset=".55" stop-color="#e4aa7f"/><stop offset="1" stop-color="#c98968"/></linearGradient>
+            <linearGradient id="worker-hat" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff297"/><stop offset=".45" stop-color="#ffd348"/><stop offset="1" stop-color="#d99521"/></linearGradient>
+            <linearGradient id="worker-cloth" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#52718b"/><stop offset=".5" stop-color="#36566f"/><stop offset="1" stop-color="#243b52"/></linearGradient>
+            <linearGradient id="worker-vest" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffbe55"/><stop offset="1" stop-color="#e98632"/></linearGradient>
+            <linearGradient id="worker-toolbox" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d35943"/><stop offset="1" stop-color="#943b36"/></linearGradient>
+          </defs>
+          <g class="worker-leg worker-leg-left">
+            <path d="M151 485l-7 123 75 5 9-120z" fill="url(#worker-cloth)" stroke="#263846" stroke-width="6" stroke-linejoin="round"/>
+            <path d="M144 587l74 5-1 22-75-3z" fill="#e2bb6b"/>
+            <path d="M141 609q31-9 76 3l4 28q-1 13-16 14l-90-1q-14-2-14-11 1-11 19-18z" fill="#34343a" stroke="#20252e" stroke-width="6"/>
+            <path d="M113 644h104" stroke="#a7a6a0" stroke-width="5"/>
+          </g>
+          <g class="worker-leg worker-leg-right">
+            <path d="M229 492l5 121 72-4-3-126z" fill="url(#worker-cloth)" stroke="#263846" stroke-width="6" stroke-linejoin="round"/>
+            <path d="M233 591l72-5 1 21-72 6z" fill="#e2bb6b"/>
+            <path d="M234 611q34-12 73-5l17 18q19 4 20 17-1 11-16 12H240q-13-1-13-14z" fill="#34343a" stroke="#20252e" stroke-width="6"/>
+            <path d="M231 643h105" stroke="#a7a6a0" stroke-width="5"/>
+          </g>
+          <g class="worker-arm worker-arm-right">
+            <path d="M286 297q24-5 39 20l37 55-25 20-54-49z" fill="#e3ddcb" stroke="#5b514b" stroke-width="5" stroke-linejoin="round"/>
+            <path d="M337 370q8-11 20-7l22 8q9 3 7 11-2 7-10 6l-12-3 12 9q5 6-1 10-6 4-12-1l-19-12q-9-6-7-21z" fill="url(#worker-skin)" stroke="#986248" stroke-width="4" stroke-linecap="round"/>
+            <path d="M344 393l11-15" stroke="#fff6e5" stroke-width="7"/>
+          </g>
+          <g class="worker-body">
+            <path d="M169 276q-44 8-53 39l3 125 20 65q77 25 171-2l12-65-5-120q-10-34-54-42z" fill="#ede6d6" stroke="#63544a" stroke-width="6" stroke-linejoin="round"/>
+            <path d="M161 278q-27 5-42 26l7 140 31 26 30-31-4-157z M266 280q32 6 46 29l-5 135-26 25-26-30 1-157z" fill="url(#worker-vest)" stroke="#a66130" stroke-width="4"/>
+            <path d="M130 337l25 8-1 20-27-7z M286 345l27-9-1 21-26 9z" fill="#f9e7a8"/>
+            <path d="M161 302l27 10-2 86 23 13h35l23-13-3-87 25-9 5 127 15 61q-80 34-169 1l16-64z" fill="url(#worker-cloth)" stroke="#243b4e" stroke-width="6" stroke-linejoin="round"/>
+            <path d="M183 313l15 4-2 83-13-2z M254 317l15-4-1 85-13 2z" fill="#314f67" stroke="#233a4c" stroke-width="3"/>
+            <circle cx="190" cy="396" r="6" fill="#ecc878"/><circle cx="262" cy="396" r="6" fill="#ecc878"/>
+            <path d="M192 416h68v36q-34 16-68 0z" fill="#456880" stroke="#263f50" stroke-width="4"/>
+            <path d="M198 425h56" stroke="#a7bec5" stroke-width="2" stroke-dasharray="3 4"/>
+            <path d="M145 477q81 27 161 0" fill="none" stroke="#1d3346" stroke-width="8"/>
+            <path d="M157 486l-2 24 M290 486l2 24" stroke="#9bb1b9" stroke-width="3" stroke-dasharray="3 4"/>
+            <g transform="translate(288 326) rotate(-10)">
+              <rect width="21" height="15" rx="2" fill="#262626" stroke="#fff7d5" stroke-width="1.5"/>
+              <path d="M1 6h19v4H1z" fill="#cc3340"/><path d="M1 10h19v4H1z" fill="#f5c841"/>
+            </g>
+          </g>
+          <path d="M194 245l-1 44q34 31 69 0l-4-48" fill="url(#worker-skin)" stroke="#a96c52" stroke-width="5"/>
+          <g class="worker-head">
+            <path d="M157 172q-7-72 68-78 75-1 72 78l-5 62q-6 59-66 72-60-13-66-72z" fill="url(#worker-skin)" stroke="#875841" stroke-width="6"/>
+            <ellipse cx="157" cy="207" rx="16" ry="23" fill="#e6ad86" stroke="#946048" stroke-width="5"/>
+            <ellipse cx="295" cy="207" rx="16" ry="23" fill="#e6ad86" stroke="#946048" stroke-width="5"/>
+            <path d="M158 179q0-70 67-74 71-2 72 74-18-3-23-31-23 8-49-8-29 17-48 8-3 25-19 31z" fill="#82715b" stroke="#625345" stroke-width="4"/>
+            <path d="M178 191q13-12 27-4 M245 187q16-9 29 4" fill="none" stroke="#685343" stroke-width="6" stroke-linecap="round"/>
+            <ellipse cx="194" cy="207" rx="12" ry="9" fill="#fff7e8"/><ellipse cx="258" cy="207" rx="12" ry="9" fill="#fff7e8"/>
+            <circle cx="196" cy="208" r="5" fill="#36444a"/><circle cx="260" cy="208" r="5" fill="#36444a"/>
+            <circle cx="198" cy="206" r="1.8" fill="#fff"/><circle cx="262" cy="206" r="1.8" fill="#fff"/>
+            <path d="M222 208l-4 25q6 5 15 0" fill="none" stroke="#b97d5e" stroke-width="4" stroke-linecap="round"/>
+            <path d="M193 244q15-17 32-4 16-13 32 4-5 14-20 9-7-2-12-5-5 3-12 5-15 5-20-9z" fill="#79614d" stroke="#5e493b" stroke-width="3"/>
+            <path class="worker-mouth" d="M210 268q15 11 30 0" fill="none" stroke="#8f5142" stroke-width="4" stroke-linecap="round"/>
+            <ellipse class="worker-mouth-open" cx="225" cy="270" rx="11" ry="7" fill="#5a2a22"/>
+            <circle cx="179" cy="230" r="7" fill="#d98977" opacity=".45"/><circle cx="273" cy="230" r="7" fill="#d98977" opacity=".45"/>
+            <path d="M157 157q2-57 68-63 65 6 68 63z" fill="url(#worker-hat)" stroke="#9f6b20" stroke-width="5"/>
+            <path d="M211 99l2 54h24l2-54q-13-8-28 0z" fill="#ffe87b" stroke="#d29b2c" stroke-width="3"/>
+            <path d="M155 147q70 9 140 0l13 11q4 9-7 12-76 10-153 0-11-3-7-12z" fill="#efb532" stroke="#9f6b20" stroke-width="5"/>
+            <path d="M156 157q69 8 138 0" fill="none" stroke="#fff4a5" stroke-width="4" opacity=".8"/>
+          </g>
+          <g class="worker-arm worker-arm-left">
+            <path d="M133 307q-20-2-28 19L80 405l24 13 43-69z" fill="#eee8d8" stroke="#66564a" stroke-width="5" stroke-linejoin="round"/>
+            <path d="M79 401q8-8 17-2l10 10-2 22q-3 9-12 9-9 0-12-10l-5-16q-2-8 4-13z" fill="url(#worker-skin)" stroke="#986248" stroke-width="4"/>
+            <path d="M76 403l24 12" stroke="#fff6e5" stroke-width="7"/>
+            <g class="worker-toolbox">
+              <path d="M82 429v-11q0-9 9-9h15q9 0 9 9v11" fill="none" stroke="#343a3d" stroke-width="7" stroke-linecap="round"/>
+              <rect x="58" y="428" width="84" height="62" rx="7" fill="url(#worker-toolbox)" stroke="#70312f" stroke-width="5"/>
+              <path d="M60 448h80" stroke="#f0b37c" stroke-width="4"/>
+              <rect x="91" y="444" width="17" height="10" rx="2" fill="#e6bf72" stroke="#77582f" stroke-width="2"/>
+            </g>
+          </g>
+        </svg></div>
+
+        <div class="tape" aria-hidden="true"><span>BAUSTELLE ✦ OPUS INTERRUPTUM ✦ BAUSTELLE ✦ OPUS INTERRUPTUM ✦ BAUSTELLE ✦ OPUS INTERRUPTUM ✦</span></div>
+        <div class="barrier left" aria-hidden="true"></div><div class="barrier right" aria-hidden="true"></div>
+        <div class="beacon" aria-hidden="true"></div>
+
+        <div class="meter" id="meter" aria-hidden="true">
+          <span class="meter-label">FLA!</span>
+          <span class="meter-well"><i class="meter-fill" id="meter-fill"></i><i class="meter-target" id="meter-target"></i></span>
+        </div>
+        <p class="flash" id="flash" aria-hidden="true"></p>
+      </div>
+
+      <section class="dialogue" id="dialogue" hidden>
+        <div class="speaker" id="speaker"></div>
+        <p class="line"><span id="line"></span></p>
+        <p class="subline" id="subline"></p>
+        <div class="choices" id="choices"></div>
+        <span class="next" aria-hidden="true">▼</span>
+      </section>
+      <div hidden><button class="hold" id="hold-button" type="button"><span aria-hidden="true">💨</span> <span data-copy="hint.button">Hold &amp; blow</span></button></div>
+
+      <section class="upload" aria-hidden="true">
+        <div class="win">
+          <div class="titlebar"><span>WISH.EXE</span><span>✕</span></div>
+          <div class="win-body">
+            <p id="upload-label"></p>
+            <div class="bar"><i id="upload-fill"></i></div>
+            <p class="upload-note">Uploading to heaven · do not tell anyone</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="arcade-screen" aria-live="polite">
+        <h2 class="gameover-title" data-copy="gameOver">GAME OVER</h2>
+        <p class="continue-title" data-copy="continuePrompt">CONTINUE?</p>
+        <p class="countdown" id="countdown"></p>
+        <p class="resurrexit" lang="la" data-copy="resurrexit">RESURREXIT… MOX</p>
+        <p class="epitaph" lang="la" data-copy="epitaph">REQUIESCAT IN PIZZA</p>
+        <button class="coin" id="coin-button" type="button" disabled data-copy="coin.button">Insert coin · INSERE NUMMUM</button>
+        <p class="coin-note" id="coin-note"></p>
+      </section>
+
+      <section class="work-order" aria-labelledby="work-order-title">
+        <div class="win">
+          <div class="titlebar"><span data-copy="workOrder.title">WORK ORDER #XXXIII</span><span aria-hidden="true">✕</span></div>
+          <div class="win-body">
+            <p class="eyebrow">✦ A heavenly work in progress ✦</p>
+            <h1 id="work-order-title">Miracle <em>under</em> construction.</h1>
+            <dl class="rows" id="work-order-rows"></dl>
+            <button class="progress" id="progress-button" type="button" aria-label="Ask the foreman how it's going">
+              <span class="progress-bar"><i></i></span><b id="progress-value">33%</b>
+            </button>
+            <p class="nein" id="nein" aria-live="polite"></p>
+            <table class="scores">
+              <caption>HIGH SCORES</caption>
+              <tbody id="high-scores"></tbody>
+            </table>
+            <p class="greeting" lang="it">Buon compleanno, Silvio. Il meglio deve ancora venire.</p>
+            <p class="german" lang="de">Baustelle. Natürlich.</p>
+            <p class="motto" lang="la">ERRARE HUMANUM EST, SOFFIARE DIVINUM</p>
+            <p class="plaque" data-copy="workOrder.lampPlaque">Was that… a wink?</p>
+            <div class="actions">
+              <button class="win-button" id="lamp-button" type="button" aria-pressed="false"><span aria-hidden="true">✧</span> Fiat lux</button>
+              <button class="win-button" id="replay-button" type="button"><span aria-hidden="true">↺</span> Replay</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="boot" id="boot" aria-labelledby="boot-title">
+        <div class="win">
+          <div class="titlebar"><span>✦ MIRACLE ARCADE v33.0</span><span aria-hidden="true">✧</span></div>
+          <div class="win-body">
+            <p class="badge">★ SILVIO’S BIRTHDAY SPECIAL ★</p>
+            <h1 id="boot-title">JESUS<br><span>&amp;</span> SILVIO</h1>
+            <p class="each">33 EACH · ONE CAKE · WHAT COULD GO WRONG</p>
+            <p class="press" lang="la"><span>INSERE NUMMUM</span> · PRESS START</p>
+            <div class="start-actions">
+              <button id="start-with-sound" type="button"><span aria-hidden="true">♪</span><strong>HOLY NOISE!</strong><small>Sound on · divine beeps</small></button>
+              <button id="start-quietly" type="button"><span aria-hidden="true">✧</span><strong>SILENT BUT BLESSED</strong><small>Sound off · same chaos</small></button>
+            </div>
+            <p class="note">Bring your lungs. You’ll see why.</p>
+          </div>
+          <div class="statusbar"><span>READY TO PARTY</span><span>XXXIII</span></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="ticker" aria-hidden="true"><span>✦ BUON COMPLEANNO SILVIO ✦ ALLES GUTE ✦ FELIX DIES NATALIS ✦ 33 ANNI ✦ BUON COMPLEANNO SILVIO ✦ ALLES GUTE ✦ FELIX DIES NATALIS ✦ 33 ANNI ✦</span></footer>
+    <p class="sr" id="sr" aria-live="polite" aria-atomic="true"></p>
+    <p class="debug" id="debug" aria-hidden="true"></p>
+  </div>
+  <noscript><style>.app{display:none!important}</style><main class="no-js"><p>✦ XXXIII ✦</p><h1>Miracle under construction.</h1><p lang="it">Buon compleanno, Silvio.</p><p>The present is still being built.<br><span lang="it">Il meglio deve ancora venire.</span></p></main></noscript>
 </body>
 </html>
