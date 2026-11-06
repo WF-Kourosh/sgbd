@@ -6,6 +6,11 @@ import { story } from './story.mjs';
 export class Cancelled extends Error {}
 
 const $ = id => document.getElementById(id);
+// Android buzzes along with the big moments. Phones that can't vibrate ignore it.
+const BUZZ = {
+  select: 10, coin: 30, whoosh: 40, stall: 60, nein: [30, 50, 30], hammer: [20, 60, 20, 60, 20],
+  shake: [80, 60, 80, 60, 80], crack: [60, 40, 120], crash: 200, impact: 400,
+};
 const FLAGS = ['eyes-closed', 'wind-1', 'wind-2', 'wind-3', 'buried', 'dead', 'installing', 'stalled', 'coined', 'lights-out', 'lux', 'ufo-pass', 'winking', 'talking', 'blowing', 'holding', 'straining', 'nudge', 'typing', 'finished'];
 
 export class Director {
@@ -133,7 +138,14 @@ export class Director {
   cue(name) {
     // Our own sounds would be heard by the open microphone (echo cancellation is off).
     if (this.mic.live && name === 'blip') return;
+    this.buzz(BUZZ[name]);
     this.sound.cue(name);
+  }
+
+  buzz(pattern) {
+    // The open microphone would hear the phone buzzing too.
+    if (!pattern || (this.mic.live && this.body.classList.contains('blowing'))) return;
+    navigator.vibrate?.(pattern);
   }
   wait(ms) { return this.pending(this.time + ms).promise; }
   announce(text) { this.el.sr.textContent = text; }
@@ -465,6 +477,7 @@ export class Director {
 
   tap() {
     this.taps++;
+    this.buzz(12);
     const button = this.el.hold;
     button.classList.remove('bump');
     void button.offsetWidth;
